@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() && request.auth.token.email == 'admin@tawzee.app';
+    }
+    match /orders/{id} { allow read, write: if signedIn(); }
+    match /items/{id}  { allow read, write: if signedIn(); }
+    match /config/{id} { allow read: if signedIn(); allow write: if isAdmin(); }
+  }
+}
