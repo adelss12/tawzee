@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="أوامر التوزيع">
 <meta name="theme-color" content="#1c6a54">
@@ -255,6 +255,15 @@ table.lines tbody tr:has(+tr.sub) td{border-bottom:0}
 #toast div{background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:500;font-size:14px;box-shadow:var(--shadow);max-width:520px}
 #toast div.err{background:var(--danger);color:#fff}
 .dbwarn{font-size:13.5px;background:var(--warn-soft);color:var(--warn);padding:10px 12px;border-radius:8px}
+/* iPhone: no sideways drift, no zoom on focus */
+html,body{overflow-x:hidden;max-width:100%}
+html{touch-action:manipulation}
+@media (max-width:640px){
+  .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;gap:4px}
+  .tab{justify-content:center;padding:8px 4px;font-size:13.5px;gap:5px;min-width:0}
+  .tab .cnt{padding:0 6px}
+  input.in,select.in,textarea.in{font-size:16px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
