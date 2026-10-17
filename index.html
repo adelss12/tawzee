@@ -449,8 +449,7 @@ function orderView(o){
       ${!closed&&can('add')?`<button class="btn primary" data-act="add-line">+ أمر صرف</button>`:''}
       ${can('export')?`<button class="btn" data-act="xlsx-one">Excel</button><button class="btn" data-act="print">طباعة</button>`:''}
       ${can('close')?(closed?`<button class="btn" data-act="reopen">إعادة فتح</button>`:`<button class="btn" data-act="close-order">إنهاء الأمر</button>`):''}
-      ${!closed&&can('edit')?`<button class="btn" data-act="edit-order">تعديل البيانات</button>`:''}
-      ${can('del')?`<button class="btn danger" data-act="del-order">حذف</button>`:''}</div></div>
+      ${!closed&&can('edit')?`<button class="btn" data-act="edit-order">تعديل البيانات</button>`:''}</div></div>
   <div class="stats"><div class="stat"><b>${fmt(s.total)}</b><span>إجمالي الكمية</span></div><div class="stat"><b>${fmt(s.disp)}</b><span>المصروف</span></div><div class="stat rem"><b>${fmt(s.rem)}</b><span>المتبقي</span></div><div class="stat"><b>${s.regions}</b><span>عدد المناطق</span></div></div>
   ${!closed&&can('close')&&s.lines&&s.rem<=0?`<div class="banner"><span>تم صرف كل الكميات في هذا الأمر.</span><button class="btn sm primary" data-act="close-order">إنهاء الأمر ونقله للسجل</button></div>`:''}`;
   const add='';
@@ -461,7 +460,7 @@ function orderView(o){
    return `<tr><td class="idx" data-label="م">${i+1}</td><td class="k" data-label="رقم الصنف">${esc(l.itemNo)}</td><td class="wide" data-label="الوصف">${esc(l.desc)}</td><td data-label="المنطقة">${l.region?`<span class="region-tag">${esc(l.region)}</span>`:'—'}</td>
     <td class="n" data-label="الكمية">${fmt(l.qty)}</td><td class="n" data-label="المصروف">${fmt(d)}</td><td class="n" data-label="المتبقي"><span class="remv ${r<=0?'z':''}">${fmt(r)}</span></td><td data-label="الحالة">${st}</td>
     <td class="act">${closed?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف (${(l.dists||[]).length})</button>`:
-      `${can('dist')&&r>0?`<button class="btn sm primary" data-act="dist" data-l="${esc(l.id)}">صرف</button>`:((l.dists||[]).length?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف</button>`:'')}${can('edit')?`<button class="btn sm" data-act="edit-line" data-l="${esc(l.id)}">تعديل</button>`:''}${can('del')?`<button class="btn sm danger" data-act="del-line" data-l="${esc(l.id)}">حذف</button>`:''}`}</td></tr>${subRow(l)}`}).join('')}
+      `${can('dist')&&r>0?`<button class="btn sm primary" data-act="dist" data-l="${esc(l.id)}">صرف</button>`:((l.dists||[]).length?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف</button>`:'')}${can('edit')?`<button class="btn sm" data-act="edit-line" data-l="${esc(l.id)}">تعديل</button>`:''}`}</td></tr>${subRow(l)}`}).join('')}
   </tbody><tfoot><tr><td class="lbl" colspan="4">${S.region?'إجمالي '+esc(S.region):'الإجمالي'}</td><td class="n">${fmt(fs.qty)}</td><td class="n">${fmt(fs.disp)}</td><td class="n">${fmt(fs.rem)}</td><td></td><td></td></tr></tfoot></table></div>`;
   return head+regPanel(o)+add+filt+table;
 }
@@ -596,8 +595,9 @@ const ACT={
       <div><label class="lb" for="m-qty">الكمية</label><input class="in" id="m-qty" inputmode="decimal" value="${l.qty}"></div></div>
       <div><label class="lb" for="m-desc">الوصف</label><input class="in" id="m-desc" value="${esc(l.desc)}" autocomplete="off"><div class="hint" id="m-hint"></div></div>
       <div><label class="lb" for="m-region">المنطقة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-region" list="dl-regions" value="${esc(l.region)}" autocomplete="off"></div>
-      <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">حفظ</button><button type="button" class="btn" data-m="cancel">إلغاء</button></div></form>`,
-      {ok:async()=>{const r=readLine('m');if(r.err)return mErr(r.err);const d=lDisp(l);if(r.qty<d)return mErr(`لا يمكن أن تقل الكمية عن المصروف (${fmt(d)}).`);
+      <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">حفظ</button><button type="button" class="btn" data-m="cancel">إلغاء</button>${can('del')?'<button type="button" class="btn danger" data-m="delline" style="margin-inline-start:auto">حذف الصنف</button>':''}</div></form>`,
+      {delline:async(b)=>{if(!b.dataset.arm){b.dataset.arm='1';b.textContent=(l.dists||[]).length?'تأكيد الحذف مع سجل الصرف':'تأكيد حذف الصنف';b.classList.add('solid');return}try{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));closeModal();toast('حُذف الصنف من الأمر')}catch(e){mErr(dbErr(e))}},
+       ok:async()=>{const r=readLine('m');if(r.err)return mErr(r.err);const d=lDisp(l);if(r.qty<d)return mErr(`لا يمكن أن تقل الكمية عن المصروف (${fmt(d)}).`);
         try{await ensureItem(r);await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);Object.assign(x,{itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region});return{lines:od.lines}});if(l.itemNo!==r.no)await cleanupItem(l.itemNo);closeModal();toast('تم الحفظ')}catch(e){mErr(dbErr(e))}}});
     syncDescLock('m')},
   'del-line'(t){const o=getOrder(S.orderId);const l=(o.lines||[]).find(x=>x.id===t.dataset.l);if(!l)return;confirmBox('حذف الصنف من الأمر',`${l.itemNo} — ${l.desc} (${l.region}). سيُحذف مع سجل صرفه.`,'حذف',async()=>{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));toast('حُذف الصنف')})},
@@ -662,6 +662,10 @@ function openSettings(msg){const admin=S.role==='admin';const pm=S.perms||{};
     <div class="actions">${can('backup')?'<button type="button" class="btn" data-m="backup">تنزيل نسخة احتياطية</button>':''}
     ${admin?'<label class="btn" for="m-file">استعادة من نسخة…</label><input type="file" id="m-file" accept=".json,application/json" hidden>':''}</div>
     <div id="m-restore"></div></section>
+  ${can('del')&&S.orders.length?`<section class="set"><div class="set-h"><b>حذف أمر</b><small>يُحذف الأمر بكل أصنافه وسجل صرفه نهائياً. لإيقاف أمر دون حذفه استخدم «إنهاء الأمر».</small></div>
+    <div><label class="lb" for="m-delo">الأمر</label><select class="in" id="m-delo"><option value="">اختر الأمر…</option>${[...S.orders].sort((x,y)=>(y.createdAt||0)-(x.createdAt||0)).map(o=>`<option value="${esc(o.id)}">أمر ${esc(o.no)} — ${o.status==='closed'?'منتهي':'جارٍ'} — ${fod(o)}</option>`).join('')}</select></div>
+    <div><label class="lb" for="m-delc">للتأكيد اكتب رقم الأمر</label><input class="in" id="m-delc" autocomplete="off" inputmode="numeric"></div>
+    <div class="actions"><button type="button" class="btn danger solid" data-m="delorder">حذف الأمر نهائياً</button></div></section>`:''}
   ${admin?`<section class="set"><div class="set-h"><b>البدء من الصفر</b><small>يُنصح بتنزيل نسخة احتياطية قبل الحذف. الأرقام السرية والصلاحيات لا تُحذف.</small></div>
     ${S.orders.some(o=>o.id.startsWith('demo'))?`<div class="actions"><button type="button" class="btn" data-m="wipe-demo">حذف الأوامر التجريبية فقط (${S.orders.filter(o=>o.id.startsWith('demo')).length})</button></div>`:''}
     <div class="perms"><label class="perm"><input type="checkbox" id="wp-orders" checked><span>كل الأوامر (${S.orders.length})، الجارية والمنتهية</span></label>
@@ -670,6 +674,8 @@ function openSettings(msg){const admin=S.role==='admin';const pm=S.perms||{};
     <div class="actions"><button type="button" class="btn danger solid" data-m="wipe">حذف نهائي</button></div></section>`:''}
   <div class="ferr" id="m-err"></div><div class="foot"><button type="button" class="btn" data-m="cancel">إغلاق</button></div>`,
   {pass:()=>ACT.chpass(),
+   delorder:async(b)=>{const id=v('m-delo');const o=getOrder(id);if(!o)return mErr('اختر الأمر الذي تريد حذفه.');if(nd(v('m-delc'))!==nd(o.no))return mErr(`اكتب رقم الأمر ${o.no} في خانة التأكيد.`);
+     b.disabled=true;try{await enqueue('o:'+o.id,()=>S.db.collection('orders').doc(o.id).delete());if(S.orderId===o.id)S.orderId=null;S.noKeep=true;render();openSettings(`حُذف الأمر ${o.no}`)}catch(e){b.disabled=false;mErr(dbErr(e))}},
    'wipe-demo':async(b)=>{b.disabled=true;try{const demo=S.orders.filter(o=>o.id.startsWith('demo'));const nos=new Set(demo.flatMap(o=>(o.lines||[]).map(l=>l.itemNo)));
      for(const o of demo)await S.db.collection('orders').doc(o.id).delete();
      const used=new Set(S.orders.filter(o=>!o.id.startsWith('demo')).flatMap(o=>(o.lines||[]).map(l=>l.itemNo)));let ni=0;
