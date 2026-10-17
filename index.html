@@ -212,6 +212,7 @@ table.lines tbody tr:has(+tr.sub) td{border-bottom:0}
 .seg input:checked+span{color:var(--accent)}
 .seg label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
 .seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.forgot{margin-top:6px}.linkbtn{appearance:none;border:0;background:none;padding:2px 0;color:var(--accent);font-weight:600;font-size:13.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .ferr{color:var(--danger);font-size:13.5px;min-height:1.2em;font-weight:500}
 
 /* modal */
@@ -348,7 +349,8 @@ function dbErr(e){const c=e&&e.code||'';
 
 /* ---------- session & auth ---------- */
 const FB_CONFIG={apiKey:"AIzaSyAHNggucTd5PB-7yjIWLPCXA8B9pYWGIXA",authDomain:"tawzee-web.firebaseapp.com",projectId:"tawzee-web",storageBucket:"tawzee-web.firebasestorage.app",messagingSenderId:"805608003953",appId:"1:805608003953:web:b2e4f30cc6294df7463ed0"};
-const EMAILS={admin:'admin@tawzee.app',user:'user@tawzee.app'};
+const EMAILS={admin:'iadelss12@gmail.com',user:'user@tawzee.app'};
+const maskMail=m=>{const [u,d]=m.split('@');return u.slice(0,1)+'•••'+u.slice(-2)+'@'+d};
 const roleOf=u=>u&&u.email?Object.keys(EMAILS).find(k=>EMAILS[k]===u.email.toLowerCase())||null:null;
 function authErr(e){const c=e&&e.code||'';
   if(c==='auth/wrong-password'||c==='auth/invalid-credential'||c==='auth/invalid-login-credentials'||c==='auth/user-not-found')return 'الرقم السري غير صحيح.';
@@ -399,9 +401,10 @@ function loginView(){
       </fieldset>
       <div><label class="lb" for="lp">الرقم السري</label>
         <input class="in" id="lp" type="password" inputmode="numeric" autocomplete="current-password" ${ready?'':'disabled'}>
+        <div class="forgot"><button type="button" class="linkbtn" data-act="forgot">نسيت الرقم السري؟</button></div>
         </div>
       <div class="ferr" id="lerr"></div>
-      <button class="btn primary wide" ${ready?'':'disabled'}>دخول</button>
+      <button class="btn primary wide" id="lgo" ${ready?'':'disabled'}>دخول</button>
     </form></div></main>`;
 }
 
@@ -538,6 +541,9 @@ const ACT={
   back(){S.orderId=null;S.region='';S.q='';S.noKeep=true;render();window.scrollTo(0,0)},
   'open-order'(t){S.orderId=t.dataset.id;S.region='';S.noKeep=true;render();window.scrollTo(0,0)},
   'add-line'(){addLineModal()},
+  forgot(){if(S.loginRole!=='admin'){openModal(`<h3>نسيت الرقم السري</h3><p style="margin:0">تواصل مع المدير ليعيد ضبط الرقم السري لحساب المستخدم.</p><div class="foot"><button type="button" class="btn primary" data-m="cancel">حسناً</button></div>`);return}
+    openModal(`<h3>نسيت الرقم السري للمدير</h3><p style="margin:0">سنرسل رابطاً لتعيين رقم سري جديد إلى بريد المدير:<br><b dir="ltr">${esc(maskMail(EMAILS.admin))}</b></p><div class="ferr" id="m-err"></div><div class="foot"><button type="button" class="btn primary" data-m="send">إرسال الرابط</button><button type="button" class="btn" data-m="cancel">إلغاء</button></div>`,
+    {send:async(b)=>{b.disabled=true;try{await S.auth.sendPasswordResetEmail(EMAILS.admin);openModal(`<h3>تم إرسال الرابط</h3><p style="margin:0">افتح بريد المدير واضغط الرابط لكتابة رقم سري جديد (٦ خانات على الأقل)، ثم ارجع وسجّل الدخول به. إذا لم تجد الرسالة خلال دقائق فتفقد مجلد الرسائل غير المرغوب فيها.</p><div class="foot"><button type="button" class="btn primary" data-m="cancel">حسناً</button></div>`)}catch(e){b.disabled=false;mErr(authErr(e))}}})},
   settings(){openSettings()},
   chpass(){openModal(`<h3>تغيير الرقم السري — ${ROLES[S.role]}</h3><form novalidate style="display:grid;gap:12px">
     <div><label class="lb" for="m-p0">الرقم السري الحالي</label><input class="in" id="m-p0" type="password" inputmode="numeric" autocomplete="current-password"></div>
@@ -772,8 +778,8 @@ document.addEventListener('change',e=>{const t=e.target;
   if(t.name==='lr'){S.loginRole=t.value;$('#lerr').textContent=''}});
 document.addEventListener('submit',async e=>{const f=e.target;if(!$('#app').contains(f))return;e.preventDefault();
   if(f.id==='login-form'){const p=v('lp');if(!p){$('#lerr').textContent='اكتب الرقم السري.';return}
-    const btn=f.querySelector('button');btn.disabled=true;$('#lerr').textContent='';
-    try{await S.auth.signInWithEmailAndPassword(EMAILS[S.loginRole],nd(p))}catch(err){$('#lerr').textContent=authErr(err);const lp=$('#lp');if(lp)lp.select()}finally{const b=document.querySelector('#login-form button');if(b)b.disabled=false}}
+    const btn=$('#lgo');btn.disabled=true;$('#lerr').textContent='';
+    try{await S.auth.signInWithEmailAndPassword(EMAILS[S.loginRole],nd(p))}catch(err){$('#lerr').textContent=authErr(err);const lp=$('#lp');if(lp)lp.select()}finally{const b=$('#lgo');if(b)b.disabled=false}}
 });
 
 /* ---------- boot ---------- */
@@ -785,7 +791,7 @@ function startData(){const db=S.db;const onErr=e=>{if(S.role)toast(dbErr(e),'err
   UNSUB.push(db.collection('items').onSnapshot(snap=>{S.items=new Map(snap.docs.map(d=>{const x=d.data();return [String(x.itemNo),{...x,id:d.id}]}));render()},onErr))}
 function boot(){render();
   if(!window.firebase){S.dbState='none';render();return}
-  firebase.initializeApp(FB_CONFIG);S.auth=firebase.auth();S.db=firebase.firestore();
+  firebase.initializeApp(FB_CONFIG);S.auth=firebase.auth();S.auth.languageCode='ar';S.db=firebase.firestore();
   S.auth.onAuthStateChanged(u=>{S.dbState='ready';stopData();const r=roleOf(u);
     if(u&&!r){S.auth.signOut();S.role=null;S.noKeep=true;render();return}
     const was=S.role;S.role=r;S.orderId=null;S.tab='open';S.q='';S.noKeep=true;

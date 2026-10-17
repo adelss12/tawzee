@@ -18,5 +18,5 @@
 ## الحسابات
 | الحساب | البريد في Firebase Authentication |
 |---|---|
-| المدير | `admin@tawzee.app` |
+| المدير | `iadelss12@gmail.com` (يستقبل رابط «نسيت الرقم السري؟») |
 | المستخدم | `user@tawzee.app` |
