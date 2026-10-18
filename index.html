@@ -289,6 +289,15 @@ table.lines tbody tr:has(+tr.sub) td{border-bottom:0}
 .dcart{display:block;font-size:12px;color:var(--muted);font-weight:400}
 .nl-grid .nl-full{grid-column:1/-1}
 .cartwrap:empty{display:none}
+.plan{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+.pl-h{display:grid;gap:1px}.pl-h small{color:var(--muted);font-size:12.5px}
+.pl-cols,.pl-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 38px;gap:8px;align-items:center}
+.pl-cols{font-size:12.5px;font-weight:600;color:var(--muted)}
+.pl-rows{display:grid;gap:6px}
+.btn.pl-x{color:var(--danger);justify-content:center;padding:6px 0;min-height:38px}
+.btn.pl-add{border-style:dashed;border-color:var(--accent);color:var(--accent);font-weight:600}
+.pl-sum{display:flex;flex-wrap:wrap;gap:4px 14px;background:var(--accent-soft);border-radius:8px;padding:8px 12px;font-size:13.5px}.pl-sum:empty{display:none}
+.pl-sum b{font-family:var(--f-display);color:var(--accent);font-weight:600}.pl-sum .ok{color:var(--ok);font-weight:600}.pl-sum .wa{color:var(--warn);font-weight:600}.pl-sum .bad{color:var(--danger);font-weight:600}
 
 #toast{position:fixed;inset-inline:0;bottom:calc(18px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;z-index:60;pointer-events:none;padding-inline:16px}
 #toast div{background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:500;font-size:14px;box-shadow:var(--shadow);max-width:520px}
@@ -575,7 +584,24 @@ function syncDescLock(prefix='f'){
   const cw=document.getElementById(prefix+'-capw');if(cw)cw.hidden=!!it||!nd(no.value);
   updCart(prefix);
 }
-function updCart(prefix){const box=document.getElementById(prefix+'-cart');if(!box)return;
+/* ---------- distribution plan: total first, then split over regions; each region becomes its own line ---------- */
+const plRow=(r='',q='')=>`<div class="pl-row"><input class="in pl-r" list="dl-regions" autocomplete="off" placeholder="المنطقة" aria-label="المنطقة" value="${esc(r)}"><input class="in pl-q" inputmode="decimal" autocomplete="off" placeholder="الكمية" aria-label="كمية المنطقة" value="${esc(q)}"><button type="button" class="btn sm ghost pl-x" data-m="pl-del" aria-label="حذف المنطقة">✕</button></div>`;
+const planHtml=p=>`<div class="plan" id="${p}-plan" data-p="${p}"><div class="pl-h"><b>خطة التوزيع</b><small>وزّع الكمية الإجمالية على المناطق حسب الأمر</small></div><div class="pl-cols" aria-hidden="true"><span>المنطقة <span class="req">*</span></span><span>الكمية <span class="req">*</span></span><span></span></div><div class="pl-rows">${plRow()}</div><div><button type="button" class="btn sm pl-add" data-m="pl-add">+ منطقة</button></div><div class="pl-sum" id="${p}-psum" aria-live="polite"></div></div>`;
+const regN=n=>n===1?'منطقة واحدة':n===2?'منطقتان':n>=3&&n<=10?`${n} مناطق`:`${n} منطقة`;
+const regKey=x=>normDesc(x).toLowerCase();
+function readPlan(p){const box=document.getElementById(p+'-plan');const rows=[];const seen=new Set();let i=0;
+  for(const r of box.querySelectorAll('.pl-row')){i++;const reg=r.querySelector('.pl-r').value.trim(),qs=r.querySelector('.pl-q').value.trim();if(!reg&&!qs)continue;
+    if(!reg)return{err:`سطر المنطقة ${i}: اكتب اسم المنطقة.`};const q=num(qs);if(!(q>0))return{err:`اكتب كمية «${reg}» (أكبر من صفر).`};
+    const k=regKey(reg);if(seen.has(k))return{err:`المنطقة «${reg}» مكررة في خطة هذا الصنف.`};seen.add(k);rows.push({region:reg,qty:r3(q)})}
+  if(!rows.length)return{err:'وزّع الكمية على منطقة واحدة على الأقل.'};return{rows}}
+function checkPlan(r,pl){const sum=r3(pl.rows.reduce((a,x)=>a+x.qty,0));return sum===r.qty?'':`مجموع المناطق (${fmt(sum)}) لا يساوي الكمية الإجمالية (${fmt(r.qty)}).`}
+const planLines=(r,rows)=>{const g=uid();return rows.map(x=>({id:uid(),itemNo:r.no,desc:r.desc,qty:x.qty,region:x.region,grp:g,dists:[]}))};
+function updPlan(p){const box=document.getElementById(p+'-psum');if(!box)return;const tot=num(v(p+'-qty'))||0;const no=nd(v(p+'-no'));const cap=S.items.has(no)?capOf(no):(readCap(p+'-cap')||0);let sum=0,n=0,cn=0;
+  document.querySelectorAll(`#${p}-plan .pl-row`).forEach(r=>{const q=num(r.querySelector('.pl-q').value)||0;if(q>0){sum+=q;n++;const c=carts(q,cap);if(c)cn+=c.n}});sum=r3(sum);
+  const diff=r3(tot-sum);const st=tot>0?(diff===0?'<span class="ok">✓ مكتمل التوزيع</span>':diff>0?`<span class="wa">متبقي للتوزيع ${fmt(diff)}</span>`:`<span class="bad">زيادة ${fmt(-diff)} عن الإجمالي</span>`):'';
+  const h=(tot>0||sum>0)?`<span>موزّع <b>${fmt(sum)}</b> من ${fmt(tot)}</span>${st}<span>${regN(n)}</span>${cn?`<span><b>${cn}</b> عربة</span>`:''}`:'';if(box.innerHTML!==h)box.innerHTML=h}
+function resetPlan(p){const pl=document.getElementById(p+'-plan');if(!pl)return;pl.querySelector('.pl-rows').innerHTML=plRow();updPlan(p)}
+function updCart(prefix){if(document.getElementById(prefix+'-plan'))return updPlan(prefix);const box=document.getElementById(prefix+'-cart');if(!box)return;
   const no=nd(v(prefix+'-no')),q=r3((num(v(prefix+'-qty'))||0)-(+box.dataset.minus||0));
   let h='';if(S.items.has(no))h=cartBox(q,capOf(no),'من بطاقة الصنف');else{const c=readCap(prefix+'-cap');if(c)h=cartBox(q,c)}
   if(box.innerHTML!==h)box.innerHTML=h}
@@ -589,10 +615,13 @@ const mErr=t=>{const e=$('#m-err');if(e)e.textContent=t};
 $('#modal').addEventListener('click',e=>{const t=e.target.closest('[data-m]');if(!t)return;const k=t.dataset.m;
   if(k==='__bg'){if(e.target===t)closeModal();return}
   if(k==='cancel'){closeModal();return}
+  if(k==='pl-add'){e.preventDefault();const pl=t.closest('.plan');pl.querySelector('.pl-rows').insertAdjacentHTML('beforeend',plRow());const rs=pl.querySelectorAll('.pl-row');rs[rs.length-1].querySelector('input').focus();return}
+  if(k==='pl-del'){e.preventDefault();const pl=t.closest('.plan');const rs=pl.querySelectorAll('.pl-row');if(rs.length<=1)rs[0].querySelectorAll('input').forEach(i=>i.value='');else t.closest('.pl-row').remove();updPlan(pl.dataset.p);return}
   if(S.mh[k]){e.preventDefault();S.mh[k](t)}});
 $('#modal').addEventListener('submit',e=>{e.preventDefault();S.mh.ok&&S.mh.ok()});
 $('#modal').addEventListener('input',e=>{const id=e.target.id;if(id==='m-odate'){const h=$('#m-ohij');if(h)h.textContent=fdate(e.target.value)}let mm=id.match(/^(nl\d+)-no$/);if(mm)syncDescLock(mm[1]);mm=id.match(/^(nl\d+)-desc$/);if(mm&&!nd(v(mm[1]+'-no'))){const it=[...S.items.values()].find(i=>i.desc===e.target.value.trim());if(it){document.getElementById(mm[1]+'-no').value=it.itemNo;syncDescLock(mm[1])}}if(id==='m-no')syncDescLock('m');
   mm=id.match(/^(f|m|nl\d+)-(qty|cap)$/);if(mm)updCart(mm[1]);
+  {const pl=e.target.closest('.plan');if(pl)updPlan(pl.dataset.p)}
   if(id==='m-eq')updECart();
   if(id==='m-dq'){const b=$('#m-dcart');if(b){const h=cartBox(num(e.target.value),+b.dataset.cap||0);if(b.innerHTML!==h)b.innerHTML=h}}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modal').hidden)closeModal()});
@@ -630,27 +659,27 @@ const ACT={
   'new-order'(){S.nlSeq=0;openModal(`<h3>أمر توزيع جديد</h3><form novalidate style="display:grid;gap:12px">
     <div><div><label class="lb" for="m-ono">رقم أمر التوزيع</label><input class="in" id="m-ono" autocomplete="off"></div>
     </div><div><div class="lb">التاريخ</div>${dpHtml(today())}</div>
-    <div><label class="lb" for="m-onote">الجهة / ملاحظات <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-onote" autocomplete="off"></div>
-    <div class="nl-head"><b>أصناف الأمر</b><small>رقم الصنف والوصف والكمية مطلوبة لكل صنف</small></div>
+    <div class="nl-head"><b>أصناف الأمر</b><small>لكل صنف: الرقم والوصف والكمية الإجمالية، ثم توزيعها على المناطق</small></div>
     <div id="nl-rows" class="nl-rows">${nlRow()}</div>
     <div><button type="button" class="btn" data-m="nl-add">+ إضافة صنف آخر</button></div>
     <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary" id="m-go">إنشاء الأمر</button><button type="button" class="btn" data-m="cancel">إلغاء</button></div></form>`,
     {'nl-add':()=>{$('#nl-rows').insertAdjacentHTML('beforeend',nlRow());const rows=document.querySelectorAll('#nl-rows .nl-row');const last=rows[rows.length-1];last.querySelector('input').focus();last.scrollIntoView({block:'nearest'})},
-     'nl-del':(b)=>{const rows=document.querySelectorAll('#nl-rows .nl-row');if(rows.length<=1){const r=b.closest('.nl-row');r.querySelectorAll('input').forEach(i=>{i.value='';i.readOnly=false});return}b.closest('.nl-row').remove();renumberNl()},
+     'nl-del':(b)=>{const rows=document.querySelectorAll('#nl-rows .nl-row');if(rows.length<=1){const r=b.closest('.nl-row');r.querySelectorAll('input').forEach(i=>{i.value='';i.readOnly=false});resetPlan(r.dataset.p);syncDescLock(r.dataset.p);return}b.closest('.nl-row').remove();renumberNl()},
      ok:async()=>{const no=nd(v('m-ono'));const er=validOrderNo(no);if(er)return mErr(er);
-      const lines=[],seen={},newItems=[];let idx=0;
+      const lines=[],seen={},newItems=[],keys=new Set();let idx=0,items=0;
       for(const row of document.querySelectorAll('#nl-rows .nl-row')){idx++;const p=row.dataset.p;
-        const empty=['no','desc','qty','region','dist','cap'].every(k=>!v(p+'-'+k).trim());if(empty)continue;
+        const empty=['no','desc','qty','cap'].every(k=>!v(p+'-'+k).trim())&&[...row.querySelectorAll('.pl-row input')].every(i=>!i.value.trim());if(empty)continue;
         const r=readLine(p);if(r.err)return mErr(`الصنف ${idx}: ${r.err}`);
         if(seen[r.no]!==undefined&&normDesc(seen[r.no])!==normDesc(r.desc))return mErr(`الصنف ${idx}: رقم الصنف ${r.no} مكتوب بوصفين مختلفين في هذا الأمر.`);{const dup=Object.keys(seen).find(k=>k!==r.no&&normDesc(seen[k])===normDesc(r.desc));if(dup)return mErr(`الصنف ${idx}: الوصف «${r.desc}» مكتوب برقمين مختلفين (${dup} و ${r.no}).`)}seen[r.no]=r.desc;
-        const dRaw=v(p+'-dist').trim();let d0=0;if(dRaw){d0=num(dRaw);if(!(d0>=0))return mErr(`الصنف ${idx}: المصروف الآن يجب أن يكون رقماً.`);if(d0>r.qty)return mErr(`الصنف ${idx}: المصروف أكبر من الكمية.`);if(d0>0&&!r.region)return mErr(`الصنف ${idx}: اكتب المنطقة، فهي مطلوبة عند تسجيل مصروف.`)}
+        const pl=readPlan(p);if(pl.err)return mErr(`الصنف ${idx}: ${pl.err}`);{const ce=checkPlan(r,pl);if(ce)return mErr(`الصنف ${idx}: ${ce}`)}
+        for(const x of pl.rows){const k=r.no+'|'+regKey(x.region);if(keys.has(k))return mErr(`الصنف ${idx}: المنطقة «${x.region}» مكررة لنفس الصنف في هذا الأمر.`);keys.add(k)}
         if(!S.items.has(r.no)){const pv=newItems.find(x=>x.no===r.no);if(pv&&pv.cap!==r.cap)return mErr(`الصنف ${idx}: رقم الصنف ${r.no} مكتوب بسعتي عربة مختلفتين (${pv.cap} و ${r.cap}).`);if(!pv)newItems.push(r)}
-        lines.push({id:uid(),itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region,dists:d0>0?[mkDist(d0,r.region,'',r.cap)]:[]})}
-      if(!lines.length)return mErr('أضف صنفاً واحداً على الأقل: رقم الصنف والوصف والكمية.');
+        lines.push(...planLines(r,pl.rows));items++}
+      if(!lines.length)return mErr('أضف صنفاً واحداً على الأقل: رقم الصنف والوصف والكمية الإجمالية وخطة التوزيع.');
       const b=$('#m-go');b.disabled=true;
       try{for(const r of newItems)await ensureItem(r);
-        const ref=S.db.collection('orders').doc();await ref.set({no,date:dpValue(),cal:DP.cal,note:v('m-onote').trim(),status:'open',lines,createdBy:S.role,createdAt:Date.now(),updatedAt:Date.now()});
-        closeModal();S.orderId=ref.id;S.tab='open';S.noKeep=true;render();window.scrollTo(0,0);toast(`تم إنشاء الأمر بـ ${lines.length} صنف`)}catch(e){b.disabled=false;mErr(dbErr(e))}}})},
+        const ref=S.db.collection('orders').doc();await ref.set({no,date:dpValue(),cal:DP.cal,note:'',status:'open',lines,createdBy:S.role,createdAt:Date.now(),updatedAt:Date.now()});
+        closeModal();S.orderId=ref.id;S.tab='open';S.noKeep=true;render();window.scrollTo(0,0);toast(`تم إنشاء الأمر: ${items} صنف على ${lines.length} سطر توزيع`)}catch(e){b.disabled=false;mErr(dbErr(e))}}})},
   'edit-order'(){const o=getOrder(S.orderId);openModal(`<h3>تعديل بيانات الأمر</h3>`+orderForm(o),{ok:async()=>{const no=nd(v('m-ono'));const er=validOrderNo(no,o.id);if(er)return mErr(er);
     try{await mutateOrder(o.id,()=>({no,date:dpValue(),cal:DP.cal,note:v('m-onote').trim()}));closeModal();toast('تم الحفظ')}catch(e){mErr(dbErr(e))}}})},
   'close-order'(){const o=getOrder(S.orderId),s=oStats(o);confirmBox('إنهاء الأمر '+o.no,s.rem>0?`ما زال هناك ${fmt(s.rem)} غير مصروف. سيُنقل الأمر إلى «الأوامر المنتهية» كما هو، ويمكن إعادة فتحه لاحقاً.`:'سيُنقل الأمر إلى «الأوامر المنتهية» مع كامل سجل الصرف.','إنهاء الأمر',async()=>{await mutateOrder(o.id,od=>{(od.lines||[]).forEach(l=>{l.cap=capOf(l.itemNo)});return{status:'closed',closedAt:Date.now(),closedBy:S.role,lines:od.lines||[]}});toast('أُنهي الأمر ونُقل للسجل');S.orderId=null;S.tab='closed';S.noKeep=true;render()},false)},
@@ -659,12 +688,12 @@ const ACT={
   dist(t,msg){const lid=typeof t==='string'?t:t.dataset.l;const o=getOrder(S.orderId);const l=o&&(o.lines||[]).find(x=>x.id===lid);if(!l){closeModal();return}
     const closed=o.status==='closed';const r=lRem(l);const ds=l.dists||[];
     const hist=ds.length?`<div><div class="lb">سجل الصرف (${ds.length})</div><div class="hist">${ds.map((d,i)=>({d,i})).reverse().map(({d,i})=>`<div class="h"><div><b>${fmt(d.qty)}</b> ← ${esc(regLbl(dReg(d,l)))}${d.cap?` · ${dCartTxt(d)}`:''}${edMark(d)}<small>${dDay(d.at)} ${fdt(d.at)} · ${ROLES[d.by]||'—'}${d.rep?' · المندوب: '+esc(d.rep):''}${d.note?' · '+esc(d.note):''}</small></div></div>`).join('')}</div></div>`:'<div class="hint">لم يُسجَّل صرف لهذا الصنف بعد.</div>';
-    openModal(`<h3>صرف ${esc(l.desc)}</h3>
-      <div class="avail"><span>الكمية المتوفرة</span><b>${fmt(r)}</b><div class="sub">من أصل ${fmt(l.qty)} · المصروف ${fmt(lDisp(l))} · رقم الصنف ${esc(l.itemNo)}${lCap(l,o)?` · سعة العربة ${fmt(lCap(l,o))}`:''}</div></div>
+    openModal(`<h3>صرف ${esc(l.desc)}${l.region?' — '+esc(l.region):''}</h3>
+      <div class="avail"><span>الكمية المتوفرة${l.region?' — '+esc(l.region):''}</span><b>${fmt(r)}</b><div class="sub">من أصل ${fmt(l.qty)} · المصروف ${fmt(lDisp(l))} · رقم الصنف ${esc(l.itemNo)}${lCap(l,o)?` · سعة العربة ${fmt(lCap(l,o))}`:''}</div></div>
       ${msg?`<div class="banner">${esc(msg)}</div>`:''}
       ${!closed&&r>0&&can('dist')?`<form novalidate style="display:grid;gap:12px"><div class="grid2">
         <div><label class="lb" for="m-dq">الكمية المراد صرفها</label><input class="in" id="m-dq" inputmode="decimal" autocomplete="off" placeholder="حتى ${fmt(r)}"></div>
-        <div><label class="lb" for="m-dr">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-dr" list="dl-regions" autocomplete="off" placeholder="مثال: الرياض" required></div></div>
+        <div>${l.region?`<label class="lb" for="m-dr">المنطقة</label><input class="in" id="m-dr" value="${esc(l.region)}" readonly>`:`<label class="lb" for="m-dr">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-dr" list="dl-regions" autocomplete="off" placeholder="مثال: الرياض" required>`}</div></div>
         <div class="cartwrap" id="m-dcart" data-cap="${capOf(l.itemNo)}"></div>
         <div><label class="lb" for="m-drep">المندوب <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-drep" list="dl-reps" autocomplete="off" placeholder="اسم المندوب المستلم"></div>
         <div><label class="lb" for="m-dn">ملاحظة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-dn" autocomplete="off"></div>
@@ -678,16 +707,17 @@ const ACT={
     const after=m=>{if(fromSet){S.fixO=o.id;openSettings(m)}else{closeModal();toast(m)}};
     openModal(`<h3><span class="tagx item">تعديل الصنف</span>في أمر ${esc(o.no)}</h3><form novalidate style="display:grid;gap:12px">
       <div class="grid2"><div><label class="lb" for="m-no">رقم الصنف</label><input class="in" id="m-no" list="dl-items" value="${esc(l.itemNo)}" autocomplete="off"></div>
-      <div><label class="lb" for="m-qty">الكمية</label><input class="in" id="m-qty" inputmode="decimal" value="${l.qty}"></div></div>
+      <div><label class="lb" for="m-qty">كمية المنطقة</label><input class="in" id="m-qty" inputmode="decimal" value="${l.qty}"></div></div>
       <div><label class="lb" for="m-desc">الوصف</label><input class="in" id="m-desc" value="${esc(l.desc)}" data-free="${esc(l.itemNo)}" data-orig="${esc(l.desc)}" autocomplete="off"><div class="hint" id="m-hint"></div></div>
-      <div><label class="lb" for="m-region">المنطقة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-region" list="dl-regions" value="${esc(l.region)}" autocomplete="off"></div>
+      <div><label class="lb" for="m-region">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-region" list="dl-regions" value="${esc(l.region)}" autocomplete="off"></div>
       <div id="m-capw" hidden>${capField('m')}</div><div class="cartwrap" id="m-cart" data-minus="${lDisp(l)}"></div>
       <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">حفظ</button>${fromSet?'<button type="button" class="btn" data-m="back">رجوع</button>':'<button type="button" class="btn" data-m="cancel">إلغاء</button>'}${can('del')?'<button type="button" class="btn danger" data-m="delline" style="margin-inline-start:auto">حذف الصنف من الأمر</button>':''}</div></form>`,
       {back:()=>{S.fixO=o.id;openSettings()},
        delline:async(b)=>{if(!b.dataset.arm){b.dataset.arm='1';b.textContent=(l.dists||[]).length?'تأكيد الحذف مع سجل الصرف':'تأكيد حذف الصنف';b.classList.add('solid');return}try{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));S.fixL='';after('حُذف الصنف من الأمر')}catch(e){mErr(dbErr(e))}},
-       ok:async()=>{const r=readLine('m',l.itemNo);if(r.err)return mErr(r.err);const d=lDisp(l);if(r.qty<d)return mErr(`لا يمكن أن تقل الكمية عن المصروف (${fmt(d)}).`);
+       ok:async()=>{const r=readLine('m',l.itemNo,true);if(r.err)return mErr(r.err);const d=lDisp(l);if(r.qty<d)return mErr(`لا يمكن أن تقل الكمية عن المصروف (${fmt(d)}).`);
+        if((o.lines||[]).some(y=>y.id!==l.id&&y.itemNo===r.no&&regKey(y.region)===regKey(r.region)))return mErr(`المنطقة «${r.region}» موجودة لهذا الصنف في سطر آخر من الأمر.`);
         try{const it=S.items.get(r.no);if(it&&r.no===l.itemNo&&normDesc(r.desc)!==normDesc(it.desc))await setItemDesc(it,r.desc);
-          await ensureItem(r);await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);Object.assign(x,{itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region});return{lines:od.lines}});if(l.itemNo!==r.no)await cleanupItem(l.itemNo);after('تم حفظ الصنف')}catch(e){mErr(dbErr(e))}}});
+          await ensureItem(r);await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);if((x.region||'')!==r.region)(x.dists||[]).forEach(z=>{if(dReg(z,x)===(x.region||''))z.region=r.region});Object.assign(x,{itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region});return{lines:od.lines}});if(l.itemNo!==r.no)await cleanupItem(l.itemNo);after('تم حفظ الصنف')}catch(e){mErr(dbErr(e))}}});
     syncDescLock('m')},
   'del-line'(t){const o=getOrder(S.orderId);const l=(o.lines||[]).find(x=>x.id===t.dataset.l);if(!l)return;confirmBox('حذف الصنف من الأمر',`${l.itemNo} — ${l.desc} (${l.region}). سيُحذف مع سجل صرفه.`,'حذف',async()=>{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));toast('حُذف الصنف')})},
   'new-item'(){openModal(`<h3>صنف جديد</h3><form novalidate style="display:grid;gap:12px"><div><label class="lb" for="m-ino">رقم الصنف</label><input class="in" id="m-ino" autocomplete="off" inputmode="numeric" maxlength="11" placeholder="22xxxxxxxxx"></div><div><label class="lb" for="m-idesc">الوصف</label><input class="in" id="m-idesc" autocomplete="off"></div>${capField('m-i')}<div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">إضافة</button><button type="button" class="btn" data-m="cancel">إلغاء</button></div></form>`,
@@ -714,8 +744,8 @@ const normDesc=x=>String(x||'').replace(/\s+/g,' ').trim();
 function descOwner(desc,exceptNo){const k=normDesc(desc);return [...S.items.values()].find(i=>normDesc(i.desc)===k&&i.itemNo!==exceptNo)}
 function noHint(val){const n=nd(val).replace(/\s/g,'');if(!n)return['',''];if(/\D/.test(n))return['أرقام فقط','bad'];if(!n.startsWith('22')&&n.length>=2)return['يجب أن يبدأ بـ 22','bad'];if(n.length<11)return[`${n.length} من 11 رقماً`,''];if(n.length>11)return[`${n.length} رقماً — الزيادة غير مقبولة`,'bad'];return null}
 async function cleanupItem(no){if(!no||S.orders.some(o=>(o.lines||[]).some(l=>l.itemNo===no)))return;const it=S.items.get(no);if(it)try{await S.db.collection('items').doc(it.id).delete()}catch(e){}}
-function readLine(p,freeNo){const no=nd(v(p+'-no')),desc=v(p+'-desc').trim(),qty=num(v(p+'-qty')),region=v(p+'-region').trim();
-  if(!no)return{err:'اكتب رقم الصنف.'};if(!NO_RE.test(no))return{err:NO_MSG};if(!desc)return{err:'اكتب وصف الصنف.'};if(!(qty>0))return{err:'اكتب كمية أكبر من صفر.'};
+function readLine(p,freeNo,needReg){const no=nd(v(p+'-no')),desc=v(p+'-desc').trim(),qty=num(v(p+'-qty')),region=v(p+'-region').trim();
+  if(!no)return{err:'اكتب رقم الصنف.'};if(!NO_RE.test(no))return{err:NO_MSG};if(!desc)return{err:'اكتب وصف الصنف.'};if(!(qty>0))return{err:'اكتب كمية أكبر من صفر.'};if(needReg&&!region)return{err:'اكتب المنطقة.'};
   const it=S.items.get(no);const free=!!it&&no===freeNo;if(it&&!free&&normDesc(it.desc)!==normDesc(desc))return{err:`رقم الصنف ${no} مسجّل بوصف «${it.desc}». الرقم لا يتكرر إلا بنفس الوصف.`};
   if(!it||free){const ow=descOwner(desc,no);if(ow)return{err:`الوصف «${ow.desc}» مسجّل برقم الصنف ${ow.itemNo}. استخدم نفس الرقم حتى لا يتكرر الصنف.`}}
   const cap=it?capOf(no):readCap(p+'-cap');if(!it&&!cap)return{err:`الصنف ${no} جديد. ${CAP_ERR}`};
@@ -726,19 +756,18 @@ async function ensureItem(r){if(!S.items.has(r.no))await S.db.collection('items'
 
 function addLineModal(){openModal(`<h3>أمر صرف — إضافة صنف</h3><form novalidate style="display:grid;gap:12px">
   <div class="grid2"><div><label class="lb" for="f-no">رقم الصنف</label><input class="in" id="f-no" list="dl-items" autocomplete="off" inputmode="numeric" maxlength="11" placeholder="22xxxxxxxxx"></div>
-  <div><label class="lb" for="f-qty">الكمية</label><input class="in" id="f-qty" inputmode="decimal" autocomplete="off"></div></div>
+  <div><label class="lb" for="f-qty">الكمية الإجمالية</label><input class="in" id="f-qty" inputmode="decimal" autocomplete="off"></div></div>
   <div><label class="lb" for="f-desc">الوصف</label><input class="in" id="f-desc" list="dl-desc" autocomplete="off"><div class="hint" id="f-hint"></div></div>
-  <div class="grid2"><div><label class="lb" for="f-region">المنطقة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="f-region" list="dl-regions" autocomplete="off"></div>
-  <div><label class="lb" for="f-dist">المصروف الآن <span style="font-weight:400">(اختياري)</span></label><input class="in" id="f-dist" inputmode="decimal" autocomplete="off"></div></div>
-  <div id="f-capw" hidden>${capField('f')}</div><div class="cartwrap" id="f-cart"></div>
+  <div id="f-capw" hidden>${capField('f')}</div>${planHtml('f')}
   <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary" id="f-go">إضافة</button><button type="button" class="btn" data-m="cancel">إغلاق</button></div></form>`,{ok:addLine})}
 async function addLine(){const o=getOrder(S.orderId);if(!o)return closeModal();mErr('');
   const r=readLine('f');if(r.err){mErr(r.err);return}
-  const dRaw=v('f-dist').trim();let d0=0;if(dRaw){d0=num(dRaw);if(!(d0>=0)){mErr('المصروف الآن يجب أن يكون رقماً.');return}if(d0>r.qty){mErr('المصروف لا يمكن أن يزيد عن الكمية.');return}if(d0>0&&!r.region){mErr('اكتب المنطقة، فهي مطلوبة عند تسجيل مصروف.');return}}
-  const line={id:uid(),itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region,dists:d0>0?[mkDist(d0,r.region,'',r.cap)]:[]};
+  const pl=readPlan('f');if(pl.err){mErr(pl.err);return}{const ce=checkPlan(r,pl);if(ce){mErr(ce);return}}
+  {const ex=pl.rows.find(x=>(o.lines||[]).some(l=>l.itemNo===r.no&&regKey(l.region)===regKey(x.region)));if(ex){mErr(`المنطقة «${ex.region}» مضافة لهذا الصنف في الأمر من قبل. عدّلها من الإعدادات ← تصحيح الأوامر.`);return}}
+  const lines=planLines(r,pl.rows);
   const btn=$('#f-go');if(btn)btn.disabled=true;
-  try{await ensureItem(r);await mutateOrder(o.id,od=>({lines:[...(od.lines||[]),line]}));
-    ['f-no','f-desc','f-qty','f-dist','f-cap'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';e.readOnly=false}});syncDescLock();const fn=$('#f-no');if(fn)fn.focus();mErr('');toast(`أُضيف ${r.desc} — أضف صنفاً آخر أو أغلق`)}
+  try{await ensureItem(r);await mutateOrder(o.id,od=>({lines:[...(od.lines||[]),...lines]}));
+    ['f-no','f-desc','f-qty','f-cap'].forEach(id=>{const e=document.getElementById(id);if(e){e.value='';e.readOnly=false}});resetPlan('f');syncDescLock();const fn=$('#f-no');if(fn)fn.focus();mErr('');toast(`أُضيف ${r.desc} على ${regN(lines.length)} — أضف صنفاً آخر أو أغلق`)}
   catch(e){mErr(dbErr(e))}finally{const b2=$('#f-go');if(b2)b2.disabled=false}}
 
 /* ---------- settings ---------- */
@@ -746,10 +775,8 @@ function nlRow(){const p='nl'+(S.nlSeq++);const n=document.querySelectorAll('#nl
   return `<div class="nl-row" data-p="${p}"><div class="nl-top"><span class="nl-n">${n}</span><button type="button" class="btn sm ghost" data-m="nl-del" aria-label="حذف الصنف">حذف</button></div>
   <div class="nl-grid"><div><label class="lb" for="${p}-no">رقم الصنف</label><input class="in" id="${p}-no" list="dl-items" autocomplete="off" inputmode="numeric" maxlength="11" placeholder="22xxxxxxxxx"></div>
   <div class="nl-desc"><label class="lb" for="${p}-desc">الوصف</label><input class="in" id="${p}-desc" list="dl-desc" autocomplete="off"><div class="hint" id="${p}-hint"></div></div>
-  <div><label class="lb" for="${p}-qty">الكمية</label><input class="in" id="${p}-qty" inputmode="decimal" autocomplete="off"></div>
-  <div><label class="lb" for="${p}-region">المنطقة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="${p}-region" list="dl-regions" autocomplete="off"></div>
-  <div><label class="lb" for="${p}-dist">المصروف الآن <span style="font-weight:400">(اختياري)</span></label><input class="in" id="${p}-dist" inputmode="decimal" autocomplete="off"></div>
-  <div class="nl-full" id="${p}-capw" hidden>${capField(p)}</div><div class="nl-full cartwrap" id="${p}-cart"></div></div></div>`}
+  <div><label class="lb" for="${p}-qty">الكمية الإجمالية</label><input class="in" id="${p}-qty" inputmode="decimal" autocomplete="off"></div>
+  <div class="nl-full" id="${p}-capw" hidden>${capField(p)}</div><div class="nl-full">${planHtml(p)}</div></div></div>`}
 function renumberNl(){document.querySelectorAll('#nl-rows .nl-n').forEach((e,i)=>e.textContent=i+1)}
 const ICO_ITEM='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>';
 const ICO_DIST='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/><path d="m15 17 2 2 4-4"/></svg>';
@@ -772,7 +799,7 @@ function distFix(oid,lid,sel,msg){const o=getOrder(oid);const l=o&&(o.lines||[])
   openModal(head+`<div><div class="lb">اختر عملية الصرف</div><div class="dpick">${ds.map((x,i)=>({x,i})).reverse().map(({x,i})=>`<button type="button" data-m="pick" data-i="${i}" aria-pressed="${i===sel}"><div><b>${fmt(x.qty)}</b> ← ${esc(regLbl(dReg(x,l)))}${x.rep?' · '+esc(x.rep):''}${edMark(x)}<small>${dDay(x.at)} ${fdt(x.at)}</small></div><span class="mut">${i===sel?'محددة':'اختيار'}</span></button>`).join('')}</div></div>
     ${d?`<form novalidate style="display:grid;gap:12px">
       <div class="grid2"><div><label class="lb" for="m-eq">الكمية المصروفة</label><input class="in" id="m-eq" inputmode="decimal" value="${d.qty}" autocomplete="off" ${can('edit')?'':'readonly'}><div class="hint">الحد الأعلى ${fmt(maxQ)}</div></div>
-      <div><label class="lb" for="m-er">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-er" list="dl-regions" value="${esc(dReg(d,l))}" autocomplete="off" ${can('edit')?'':'readonly'}></div></div>
+      <div><label class="lb" for="m-er">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-er" list="dl-regions" value="${esc(dReg(d,l))}" autocomplete="off" ${can('edit')&&!l.region?'':'readonly'}>${l.region?'<div class="hint">منطقة ثابتة من خطة التوزيع. إذا سُجّل الصرف على منطقة خاطئة احذف العملية واصرفها من سطر المنطقة الصحيحة.</div>':''}</div></div>
       <div class="grid2"><div><label class="lb" for="m-erep">المندوب</label><input class="in" id="m-erep" list="dl-reps" value="${esc(d.rep||'')}" autocomplete="off" ${can('edit')?'':'readonly'}></div>
       <div><label class="lb" for="m-en">ملاحظة</label><input class="in" id="m-en" value="${esc(d.note||'')}" autocomplete="off" ${can('edit')?'':'readonly'}></div></div>
       <div class="cartwrap" id="m-ecart" data-cap="${+d.cap||0}" data-max="${maxQ}"></div>
