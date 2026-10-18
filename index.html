@@ -157,17 +157,18 @@ table.lines .act{white-space:nowrap;text-align:end}
   table.lines tr.sub td{display:block;padding:0;background:transparent;border:0}
   table.lines tr.sub td::before{display:none}
   .gt{font-size:13px}
-  .gr{grid-template-columns:1fr auto;gap:2px 10px;padding:8px 10px}
-  .gr.gh{display:none}
-  .gr .c-d{grid-column:1;grid-row:1;color:var(--muted);font-size:12px}
-  .gr .c-r{grid-column:1;grid-row:2;font-weight:600}
-  .gr .c-q{grid-column:2;grid-row:1;font-size:15px}
-  .gr .c-m{grid-column:2;grid-row:2;font-size:12px}.gr .c-m em{display:inline;color:var(--muted);font-weight:400}
-  .gr .c-b{grid-column:1;grid-row:3;font-size:12px}
-  .gr .c-n{grid-column:2;grid-row:3;text-align:end;font-size:12px;color:var(--muted)}
-  .gr .c-n:has(.mut){visibility:hidden}
-  .gr .c-p{grid-column:1/-1;grid-row:4;font-size:12px}.gt .gr .c-p em{display:inline}.gr .c-p:has(.mut){display:none}
-  .gf .c-r,.gf .c-b,.gf .c-n,.gf .c-p{display:none}.gf .c-d{grid-row:1/3;align-self:center;font-weight:700;color:var(--ink);font-size:14px}
+  .gt .gr{grid-template-columns:1fr auto;gap:2px 10px;padding:8px 10px}
+  .gt .gr.gh{display:none}
+  .gt .gr .c-w{grid-column:1;grid-row:1;font-weight:600}
+  .gt .gr .c-d{grid-column:1;grid-row:2;color:var(--muted);font-size:12px}
+  .gt .gr .c-r{grid-column:1;grid-row:3;font-weight:600}
+  .gt .gr .c-p{grid-column:1;grid-row:4;font-size:12.5px}
+  .gt .gr .c-q{grid-column:2;grid-row:1/3;font-size:16px;align-self:center}
+  .gt .gr .c-k{grid-column:2;grid-row:3;font-size:12px}
+  .gt .gr .c-m{grid-column:2;grid-row:4;font-size:12.5px}
+  .gt .gr em{display:inline}
+  .gt .gr .c-p:has(.mut){visibility:hidden}
+  .gt .gr .c-n{grid-column:1/-1;grid-row:5}
   .dr{grid-template-columns:1fr auto;gap:0 10px;padding:4px 0;border-top:1px dashed var(--line)}
   .dr .rg{font-weight:600}.dr .dt{grid-column:1}.dr .by{grid-column:2;text-align:end}
   table.lines tfoot tr{background:var(--sunk);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -185,13 +186,30 @@ table.lines tbody tr:has(+tr.sub) td{border-bottom:0}
 .dr{display:grid;grid-template-columns:130px minmax(90px,1fr) 80px minmax(0,2fr);gap:10px;font-size:13.5px;align-items:baseline}
 .dr .dt,.dr .by{color:var(--muted);font-size:12.5px}.dr b{text-align:end}
 .gt{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface);font-size:13.5px}
-.gr{display:grid;grid-template-columns:minmax(100px,1fr) minmax(100px,1.3fr) minmax(80px,.8fr) minmax(80px,.8fr) minmax(70px,.7fr) minmax(90px,1fr) minmax(0,1.4fr);gap:0 12px;padding:7px 12px;align-items:baseline;border-top:1px solid var(--line)}
-.gr:nth-child(odd):not(.gh):not(.gf){background:var(--sunk)}
+.gr{display:grid;grid-template-columns:minmax(64px,.7fr) minmax(96px,1fr) minmax(80px,.9fr) minmax(80px,.9fr) minmax(90px,1.1fr) minmax(90px,1.1fr) minmax(80px,.9fr);gap:0 12px;padding:7px 12px;align-items:baseline;border-top:1px solid var(--line)}
+.gr:nth-child(odd):not(.gh){background:var(--sunk)}
 .gh{border-top:0;font-size:12px;font-weight:600;color:var(--muted);background:var(--accent-soft)}
-.gf{font-weight:700;background:var(--accent-soft)}
-.gr .c-q{text-align:end;font-weight:600}.gh .c-q{font-weight:600}
-.gr .c-b{color:var(--muted)}
-.gr .c-m{text-align:end;color:var(--warn);font-weight:600}.gr .c-m.z{color:var(--ok)}.gh .c-m{color:var(--muted)}.gr .c-m em{display:none;font-style:normal}.gr .c-n{min-width:0;overflow-wrap:anywhere}.gr .c-p{min-width:0;overflow-wrap:anywhere}.gr .c-p em{display:none;font-style:normal;color:var(--muted)}.mut{color:var(--muted)}
+.gr .c-k,.gr .c-q,.gr .c-m{text-align:end}
+.gr .c-k{color:var(--muted)}
+.gr .c-q{font-weight:600}.gh .c-q{font-weight:600}
+.gr .c-d{color:var(--muted)}
+.gr .c-m{color:var(--warn);font-weight:600}.gr .c-m.z{color:var(--ok)}.gh .c-m,.gh .c-k,.gh .c-d{color:var(--muted)}
+.gr em{display:none;font-style:normal;color:var(--muted);font-weight:400}
+.gr .c-p,.gr .c-r{min-width:0;overflow-wrap:anywhere}
+.gr .c-n{grid-column:1/-1;font-size:12px;color:var(--muted);padding-top:2px;min-width:0;overflow-wrap:anywhere}
+.edited{display:inline-block;font-size:11px;font-weight:600;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:0 7px;margin-inline-start:6px;white-space:nowrap}
+.mut{color:var(--muted)}
+.btn.fix-item{border-color:var(--accent);color:var(--accent)}
+.btn.fix-dist{border-color:var(--warn);color:var(--warn)}
+.btn .ico{width:16px;height:16px;flex:none}
+.tagx{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;vertical-align:middle;margin-inline-end:6px}
+.tagx.item{background:var(--accent-soft);color:var(--accent)}
+.tagx.disp{background:var(--warn-soft);color:var(--warn)}
+.dpick{display:grid;gap:6px;max-height:220px;overflow:auto}
+.dpick button{appearance:none;text-align:start;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 12px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center;color:inherit;font:inherit}
+.dpick button[aria-pressed="true"]{border-color:var(--warn);background:var(--warn-soft)}
+.dpick small{display:block;color:var(--muted);font-size:12.5px}
+.req{color:var(--danger);font-weight:700}
 .dl-h{padding-bottom:6px}
 @media (min-width:641px) and (max-width:1180px){
   table.lines td.act{white-space:normal;width:1%}
@@ -489,8 +507,7 @@ function orderView(o){
   const regions=[...new Set((o.lines||[]).map(l=>l.region))].sort((a,b)=>a.localeCompare(b,'ar'));
   if(S.region&&!regions.includes(S.region))S.region='';
   const ls=sortLines(o.lines||[]).filter(l=>!S.region||l.region===S.region);
-  const fs={qty:0,disp:0,rem:0,carts:0};ls.forEach(l=>{fs.qty+=+l.qty||0;fs.disp+=lDisp(l);fs.rem+=lRem(l);const c=lCarts(l,o);if(c)fs.carts+=c.n});
-  const head=`<div><button class="btn ghost sm" data-act="back">→ ${closed?'الأوامر المنتهية':'الأوامر الجارية'}</button></div>
+    const head=`<div><button class="btn ghost sm" data-act="back">→ ${closed?'الأوامر المنتهية':'الأوامر الجارية'}</button></div>
   <div class="sheet-head"><div class="t">
       <h2>أمر توزيع ${esc(o.no)} <span class="pill ${closed?'closed':'open'}">${closed?'منتهي':'جارٍ'}</span></h2>
       <div class="meta">تاريخ الأمر ${fod(o)} · أنشأه ${ROLES[o.createdBy]||'—'} ${fdt(o.createdAt)}${closed?` · أنهاه ${ROLES[o.closedBy]||'—'} ${fdt(o.closedAt)}`:''}</div>
@@ -510,16 +527,18 @@ function orderView(o){
    return `<tr><td class="idx" data-label="م">${i+1}</td><td class="k" data-label="رقم الصنف">${esc(l.itemNo)}</td><td class="wide" data-label="الوصف">${esc(l.desc)}</td><td data-label="المنطقة">${l.region?`<span class="region-tag">${esc(l.region)}</span>`:'—'}</td>
     <td class="n" data-label="الكمية">${fmt(l.qty)}</td><td class="n" data-label="المصروف">${fmt(d)}</td><td class="n" data-label="المتبقي"><span class="remv ${r<=0?'z':''}">${fmt(r)}</span></td><td class="cc" data-label="عربات المتبقي">${cartCell(l,o)}</td><td data-label="الحالة">${st}</td>
     <td class="act">${closed?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف (${(l.dists||[]).length})</button>`:
-      `${can('dist')&&r>0?`<button class="btn sm primary" data-act="dist" data-l="${esc(l.id)}">صرف</button>`:((l.dists||[]).length?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف</button>`:'')}${can('edit')?`<button class="btn sm" data-act="edit-line" data-l="${esc(l.id)}">تعديل</button>`:''}`}</td></tr>${subRow(l)}`}).join('')}
-  </tbody><tfoot><tr><td class="lbl" colspan="4">${S.region?'إجمالي '+esc(S.region):'الإجمالي'}</td><td class="n" data-label="الكمية">${fmt(fs.qty)}</td><td class="n" data-label="المصروف">${fmt(fs.disp)}</td><td class="n" data-label="المتبقي">${fmt(fs.rem)}</td><td class="cc" data-label="العربات"><b>${fmt(fs.carts)}</b></td><td></td><td></td></tr></tfoot></table></div>`;
+      `${can('dist')&&r>0?`<button class="btn sm primary" data-act="dist" data-l="${esc(l.id)}">صرف</button>`:((l.dists||[]).length?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف</button>`:'')}`}</td></tr>${subRow(l)}`}).join('')}
+  </tbody></table></div>`;
   return head+regPanel(o)+add+filt+table;
 }
 
+const dDay=t=>t?WD[new Date(t).getDay()]:'—';
+const edMark=d=>d.editedAt?`<span class="edited" title="عُدّلت ${fdt(d.editedAt)} بواسطة ${ROLES[d.editedBy]||''}">معدّلة</span>`:'';
 function subRow(l){const ds=l.dists||[];if(!ds.length)return '';const agg=regAgg([l]);
   return `<tr class="sub"><td colspan="10"><div class="dl"><div class="dl-h"><span>تفاصيل الصرف</span>${Object.keys(agg).map(k=>`<span class="rchip">${esc(k)} <b>${fmt(agg[k].q)}</b></span>`).join('')}</div>
-  <div class="gt" role="table" aria-label="تفاصيل الصرف"><div class="gr gh" role="row"><span role="columnheader">التاريخ</span><span role="columnheader">المنطقة</span><span class="c-q" role="columnheader">الكمية</span><span class="c-m" role="columnheader">المتبقي</span><span role="columnheader">بواسطة</span><span class="c-p" role="columnheader">المندوب</span><span class="c-n" role="columnheader">ملاحظات</span></div>
-  ${(()=>{let left=+l.qty||0;return ds.map(d=>{left=r3(left-(+d.qty||0));return `<div class="gr" role="row"><span class="c-d" role="cell">${fdt(d.at)}</span><span class="c-r" role="cell">${esc(regLbl(dReg(d,l)))}</span><span class="c-q" role="cell">${fmt(d.qty)}${d.cap?`<span class="dcart">${cartN(d.carts||carts(d.qty,d.cap).n)}</span>`:''}</span><span class="c-m ${left<=0?'z':''}" role="cell"><em>المتبقي </em>${fmt(left)}</span><span class="c-b" role="cell">${ROLES[d.by]||''}</span><span class="c-p" role="cell">${d.rep?`<em>المندوب: </em>${esc(d.rep)}`:'<span class="mut">—</span>'}</span><span class="c-n" role="cell">${d.note?esc(d.note):'<span class="mut">—</span>'}</span></div>`}).join('')})()}
-  ${ds.length>1?`<div class="gr gf" role="row"><span class="c-d">المجموع</span><span class="c-r"></span><span class="c-q">${fmt(lDisp(l))}</span><span class="c-m ${lRem(l)<=0?'z':''}"><em>المتبقي </em>${fmt(lRem(l))}</span><span class="c-b"></span><span class="c-p"></span><span class="c-n"></span></div>`:''}</div></div></td></tr>`}
+  <div class="gt" role="table" aria-label="تفاصيل الصرف"><div class="gr gh" role="row"><span class="c-w" role="columnheader">اليوم</span><span class="c-d" role="columnheader">التاريخ</span><span class="c-k" role="columnheader">الكمية</span><span class="c-q" role="columnheader">الصرف</span><span class="c-p" role="columnheader">المندوب</span><span class="c-r" role="columnheader">المنطقة</span><span class="c-m" role="columnheader">المتبقي</span></div>
+  ${(()=>{let left=+l.qty||0;return ds.map(d=>{const before=left;left=r3(left-(+d.qty||0));return `<div class="gr" role="row"><span class="c-w" role="cell">${dDay(d.at)}</span><span class="c-d" role="cell">${fdt(d.at)}</span><span class="c-k" role="cell"><em>الكمية </em>${fmt(before)}</span><span class="c-q" role="cell">${fmt(d.qty)}${edMark(d)}${d.cap?`<span class="dcart">${cartN(d.carts||carts(d.qty,d.cap).n)}</span>`:''}</span><span class="c-p" role="cell">${d.rep?`<em>المندوب: </em>${esc(d.rep)}`:'<span class="mut">—</span>'}</span><span class="c-r" role="cell">${esc(regLbl(dReg(d,l)))}</span><span class="c-m ${left<=0?'z':''}" role="cell"><em>المتبقي </em>${fmt(left)}</span>${d.note?`<span class="c-n" role="cell">ملاحظة: ${esc(d.note)}</span>`:''}</div>`}).join('')})()}
+  </div></div></td></tr>`}
 function regPanel(o){const agg=regAgg(o.lines||[]);const ks=Object.keys(agg).sort((a,b)=>agg[b].q-agg[a].q);if(!ks.length)return '';
   return `<section class="panel"><h3>الصرف حسب المنطقة</h3><div class="regs">${ks.map(k=>{const a=agg[k];return `<div class="rg-card"><div class="rg-n">${esc(k)}</div><b>${fmt(a.q)}</b><small>${a.n} عملية صرف · ${a.items.size} صنف<br>آخر صرف ${fdt(a.last)}</small></div>`}).join('')}</div></section>`}
 function itemsView(){
@@ -549,7 +568,9 @@ function fillDatalists(){
 function syncDescLock(prefix='f'){
   const no=document.getElementById(prefix+'-no'),de=document.getElementById(prefix+'-desc'),hi=document.getElementById(prefix+'-hint');if(!no||!de)return;
   const it=S.items.get(nd(no.value));
-  if(it){de.value=it.desc;de.readOnly=true;if(hi){hi.textContent='صنف مسجّل — الوصف ثابت لهذا الرقم';hi.className='hint on'}}
+  const free=it&&de.dataset.free&&de.dataset.free===it.itemNo;
+  if(free){if(de.readOnly){de.value=de.dataset.orig||it.desc}de.readOnly=false;if(hi){hi.textContent='يمكنك تعديل الوصف. إذا غيّرته يُحدَّث في دليل الأصناف والأوامر الجارية.';hi.className='hint on'}}
+  else if(it){de.value=it.desc;de.readOnly=true;if(hi){hi.textContent='صنف مسجّل — الوصف ثابت لهذا الرقم';hi.className='hint on'}}
   else{if(de.readOnly){de.value='';}de.readOnly=false;if(hi){const h=noHint(no.value);if(h){hi.textContent=h[0];hi.className='hint'+(h[1]?' bad':'')}else{hi.textContent='رقم جديد — سيُسجَّل بهذا الوصف';hi.className='hint on'}}}
   const cw=document.getElementById(prefix+'-capw');if(cw)cw.hidden=!!it||!nd(no.value);
   updCart(prefix);
@@ -572,6 +593,7 @@ $('#modal').addEventListener('click',e=>{const t=e.target.closest('[data-m]');if
 $('#modal').addEventListener('submit',e=>{e.preventDefault();S.mh.ok&&S.mh.ok()});
 $('#modal').addEventListener('input',e=>{const id=e.target.id;if(id==='m-odate'){const h=$('#m-ohij');if(h)h.textContent=fdate(e.target.value)}let mm=id.match(/^(nl\d+)-no$/);if(mm)syncDescLock(mm[1]);mm=id.match(/^(nl\d+)-desc$/);if(mm&&!nd(v(mm[1]+'-no'))){const it=[...S.items.values()].find(i=>i.desc===e.target.value.trim());if(it){document.getElementById(mm[1]+'-no').value=it.itemNo;syncDescLock(mm[1])}}if(id==='m-no')syncDescLock('m');
   mm=id.match(/^(f|m|nl\d+)-(qty|cap)$/);if(mm)updCart(mm[1]);
+  if(id==='m-eq')updECart();
   if(id==='m-dq'){const b=$('#m-dcart');if(b){const h=cartBox(num(e.target.value),+b.dataset.cap||0);if(b.innerHTML!==h)b.innerHTML=h}}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modal').hidden)closeModal()});
 
@@ -621,7 +643,7 @@ const ACT={
         const empty=['no','desc','qty','region','dist','cap'].every(k=>!v(p+'-'+k).trim());if(empty)continue;
         const r=readLine(p);if(r.err)return mErr(`الصنف ${idx}: ${r.err}`);
         if(seen[r.no]!==undefined&&normDesc(seen[r.no])!==normDesc(r.desc))return mErr(`الصنف ${idx}: رقم الصنف ${r.no} مكتوب بوصفين مختلفين في هذا الأمر.`);{const dup=Object.keys(seen).find(k=>k!==r.no&&normDesc(seen[k])===normDesc(r.desc));if(dup)return mErr(`الصنف ${idx}: الوصف «${r.desc}» مكتوب برقمين مختلفين (${dup} و ${r.no}).`)}seen[r.no]=r.desc;
-        const dRaw=v(p+'-dist').trim();let d0=0;if(dRaw){d0=num(dRaw);if(!(d0>=0))return mErr(`الصنف ${idx}: المصروف الآن يجب أن يكون رقماً.`);if(d0>r.qty)return mErr(`الصنف ${idx}: المصروف أكبر من الكمية.`)}
+        const dRaw=v(p+'-dist').trim();let d0=0;if(dRaw){d0=num(dRaw);if(!(d0>=0))return mErr(`الصنف ${idx}: المصروف الآن يجب أن يكون رقماً.`);if(d0>r.qty)return mErr(`الصنف ${idx}: المصروف أكبر من الكمية.`);if(d0>0&&!r.region)return mErr(`الصنف ${idx}: اكتب المنطقة، فهي مطلوبة عند تسجيل مصروف.`)}
         if(!S.items.has(r.no)){const pv=newItems.find(x=>x.no===r.no);if(pv&&pv.cap!==r.cap)return mErr(`الصنف ${idx}: رقم الصنف ${r.no} مكتوب بسعتي عربة مختلفتين (${pv.cap} و ${r.cap}).`);if(!pv)newItems.push(r)}
         lines.push({id:uid(),itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region,dists:d0>0?[mkDist(d0,r.region,'',r.cap)]:[]})}
       if(!lines.length)return mErr('أضف صنفاً واحداً على الأقل: رقم الصنف والوصف والكمية.');
@@ -636,35 +658,36 @@ const ACT={
   'del-order'(){const o=getOrder(S.orderId);confirmBox('حذف الأمر '+o.no,'سيُحذف الأمر وكل أصنافه وسجل الصرف نهائياً. لا يمكن التراجع.','حذف نهائي',async()=>{await enqueue('o:'+o.id,()=>S.db.collection('orders').doc(o.id).delete());S.orderId=null;S.noKeep=true;render();toast('حُذف الأمر')})},
   dist(t,msg){const lid=typeof t==='string'?t:t.dataset.l;const o=getOrder(S.orderId);const l=o&&(o.lines||[]).find(x=>x.id===lid);if(!l){closeModal();return}
     const closed=o.status==='closed';const r=lRem(l);const ds=l.dists||[];
-    const hist=ds.length?`<div><div class="lb">سجل الصرف (${ds.length})</div><div class="hist">${ds.map((d,i)=>({d,i})).reverse().map(({d,i})=>`<div class="h"><div><b>${fmt(d.qty)}</b> ← ${esc(regLbl(dReg(d,l)))}${d.cap?` · ${dCartTxt(d)}`:''}<small>${fdt(d.at)} · ${ROLES[d.by]||'—'}${d.rep?' · المندوب: '+esc(d.rep):''}${d.note?' · '+esc(d.note):''}</small></div>${closed||!can('undo')?'':`<button type="button" class="btn sm danger" data-m="undo" data-i="${i}">تراجع</button>`}</div>`).join('')}</div></div>`:'<div class="hint">لم يُسجَّل صرف لهذا الصنف بعد.</div>';
+    const hist=ds.length?`<div><div class="lb">سجل الصرف (${ds.length})</div><div class="hist">${ds.map((d,i)=>({d,i})).reverse().map(({d,i})=>`<div class="h"><div><b>${fmt(d.qty)}</b> ← ${esc(regLbl(dReg(d,l)))}${d.cap?` · ${dCartTxt(d)}`:''}${edMark(d)}<small>${dDay(d.at)} ${fdt(d.at)} · ${ROLES[d.by]||'—'}${d.rep?' · المندوب: '+esc(d.rep):''}${d.note?' · '+esc(d.note):''}</small></div></div>`).join('')}</div></div>`:'<div class="hint">لم يُسجَّل صرف لهذا الصنف بعد.</div>';
     openModal(`<h3>صرف ${esc(l.desc)}</h3>
       <div class="avail"><span>الكمية المتوفرة</span><b>${fmt(r)}</b><div class="sub">من أصل ${fmt(l.qty)} · المصروف ${fmt(lDisp(l))} · رقم الصنف ${esc(l.itemNo)}${lCap(l,o)?` · سعة العربة ${fmt(lCap(l,o))}`:''}</div></div>
       ${msg?`<div class="banner">${esc(msg)}</div>`:''}
       ${!closed&&r>0&&can('dist')?`<form novalidate style="display:grid;gap:12px"><div class="grid2">
         <div><label class="lb" for="m-dq">الكمية المراد صرفها</label><input class="in" id="m-dq" inputmode="decimal" autocomplete="off" placeholder="حتى ${fmt(r)}"></div>
-        <div><label class="lb" for="m-dr">المنطقة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-dr" list="dl-regions" autocomplete="off" placeholder="مثال: الرياض"></div></div>
+        <div><label class="lb" for="m-dr">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-dr" list="dl-regions" autocomplete="off" placeholder="مثال: الرياض" required></div></div>
         <div class="cartwrap" id="m-dcart" data-cap="${capOf(l.itemNo)}"></div>
         <div><label class="lb" for="m-drep">المندوب <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-drep" list="dl-reps" autocomplete="off" placeholder="اسم المندوب المستلم"></div>
         <div><label class="lb" for="m-dn">ملاحظة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-dn" autocomplete="off"></div>
         <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">تسجيل الصرف</button><button type="button" class="btn" data-m="cancel">إغلاق</button></div></form>`
       :`<div class="banner ${closed?'':''}">${closed?'الأمر منتهي — السجل للعرض فقط.':r<=0?'تم صرف كامل الكمية لهذا الصنف.':'ليست لديك صلاحية الصرف — السجل للعرض فقط.'}</div><div class="ferr" id="m-err"></div>`}
       ${hist}${closed||r<=0||!can('dist')?'<div class="foot"><button class="btn" data-m="cancel">إغلاق</button></div>':''}`,
-      {ok:async()=>{const q=num(v('m-dq')),reg=v('m-dr').trim();let saved=null;if(!(q>0))return mErr('اكتب الكمية المراد صرفها.');if(q>r+1e-9)return mErr(`الكمية أكبر من المتوفر (${fmt(r)}).`);
+      {ok:async()=>{const q=num(v('m-dq')),reg=v('m-dr').trim();let saved=null;if(!(q>0))return mErr('اكتب الكمية المراد صرفها.');if(q>r+1e-9)return mErr(`الكمية أكبر من المتوفر (${fmt(r)}).`);if(!reg)return mErr('اكتب المنطقة التي صُرفت لها الكمية.');
         try{await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);if(!x)throw new Error('الصنف غير موجود');if(q>lRem(x)+1e-9)throw new Error('الكمية أكبر من المتوفر');const nd0=mkDist(q,reg,v('m-dn').trim(),capOf(x.itemNo),v('m-drep').trim());x.dists=[...(x.dists||[]),nd0];saved=nd0;return{lines:od.lines}});
-          ACT.dist(l.id,`تم صرف ${fmt(q)}${reg?' إلى '+reg:''}${saved&&saved.cap?' · '+cartN(saved.carts):''}`)}catch(e){mErr(dbErr(e))}},
-       undo:async(b)=>{if(!b.dataset.arm){b.dataset.arm='1';b.textContent='تأكيد التراجع';b.classList.add('solid');return}
-        const i=+b.dataset.i;const d=ds[i];try{await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);x.dists.splice(i,1);return{lines:od.lines}});ACT.dist(l.id,`أُعيدت ${fmt(d.qty)} إلى الكمية المتوفرة`)}catch(e){mErr(dbErr(e))}}})},
-  'edit-line'(t){const o=getOrder(S.orderId);const l=(o.lines||[]).find(x=>x.id===t.dataset.l);if(!l)return;
-    openModal(`<h3>تعديل الصنف</h3><form novalidate style="display:grid;gap:12px">
+          ACT.dist(l.id,`تم صرف ${fmt(q)} إلى ${reg}${saved&&saved.cap?' · '+cartN(saved.carts):''}`)}catch(e){mErr(dbErr(e))}}})},
+  'edit-line'(t){const fromSet=t.dataset.from==='set';const o=getOrder(t.dataset.o||S.orderId);const l=o&&(o.lines||[]).find(x=>x.id===t.dataset.l);if(!l)return;
+    const after=m=>{if(fromSet){S.fixO=o.id;openSettings(m)}else{closeModal();toast(m)}};
+    openModal(`<h3><span class="tagx item">تعديل الصنف</span>في أمر ${esc(o.no)}</h3><form novalidate style="display:grid;gap:12px">
       <div class="grid2"><div><label class="lb" for="m-no">رقم الصنف</label><input class="in" id="m-no" list="dl-items" value="${esc(l.itemNo)}" autocomplete="off"></div>
       <div><label class="lb" for="m-qty">الكمية</label><input class="in" id="m-qty" inputmode="decimal" value="${l.qty}"></div></div>
-      <div><label class="lb" for="m-desc">الوصف</label><input class="in" id="m-desc" value="${esc(l.desc)}" autocomplete="off"><div class="hint" id="m-hint"></div></div>
+      <div><label class="lb" for="m-desc">الوصف</label><input class="in" id="m-desc" value="${esc(l.desc)}" data-free="${esc(l.itemNo)}" data-orig="${esc(l.desc)}" autocomplete="off"><div class="hint" id="m-hint"></div></div>
       <div><label class="lb" for="m-region">المنطقة <span style="font-weight:400">(اختياري)</span></label><input class="in" id="m-region" list="dl-regions" value="${esc(l.region)}" autocomplete="off"></div>
       <div id="m-capw" hidden>${capField('m')}</div><div class="cartwrap" id="m-cart" data-minus="${lDisp(l)}"></div>
-      <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">حفظ</button><button type="button" class="btn" data-m="cancel">إلغاء</button>${can('del')?'<button type="button" class="btn danger" data-m="delline" style="margin-inline-start:auto">حذف الصنف</button>':''}</div></form>`,
-      {delline:async(b)=>{if(!b.dataset.arm){b.dataset.arm='1';b.textContent=(l.dists||[]).length?'تأكيد الحذف مع سجل الصرف':'تأكيد حذف الصنف';b.classList.add('solid');return}try{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));closeModal();toast('حُذف الصنف من الأمر')}catch(e){mErr(dbErr(e))}},
-       ok:async()=>{const r=readLine('m');if(r.err)return mErr(r.err);const d=lDisp(l);if(r.qty<d)return mErr(`لا يمكن أن تقل الكمية عن المصروف (${fmt(d)}).`);
-        try{await ensureItem(r);await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);Object.assign(x,{itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region});return{lines:od.lines}});if(l.itemNo!==r.no)await cleanupItem(l.itemNo);closeModal();toast('تم الحفظ')}catch(e){mErr(dbErr(e))}}});
+      <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">حفظ</button>${fromSet?'<button type="button" class="btn" data-m="back">رجوع</button>':'<button type="button" class="btn" data-m="cancel">إلغاء</button>'}${can('del')?'<button type="button" class="btn danger" data-m="delline" style="margin-inline-start:auto">حذف الصنف من الأمر</button>':''}</div></form>`,
+      {back:()=>{S.fixO=o.id;openSettings()},
+       delline:async(b)=>{if(!b.dataset.arm){b.dataset.arm='1';b.textContent=(l.dists||[]).length?'تأكيد الحذف مع سجل الصرف':'تأكيد حذف الصنف';b.classList.add('solid');return}try{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));S.fixL='';after('حُذف الصنف من الأمر')}catch(e){mErr(dbErr(e))}},
+       ok:async()=>{const r=readLine('m',l.itemNo);if(r.err)return mErr(r.err);const d=lDisp(l);if(r.qty<d)return mErr(`لا يمكن أن تقل الكمية عن المصروف (${fmt(d)}).`);
+        try{const it=S.items.get(r.no);if(it&&r.no===l.itemNo&&normDesc(r.desc)!==normDesc(it.desc))await setItemDesc(it,r.desc);
+          await ensureItem(r);await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);Object.assign(x,{itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region});return{lines:od.lines}});if(l.itemNo!==r.no)await cleanupItem(l.itemNo);after('تم حفظ الصنف')}catch(e){mErr(dbErr(e))}}});
     syncDescLock('m')},
   'del-line'(t){const o=getOrder(S.orderId);const l=(o.lines||[]).find(x=>x.id===t.dataset.l);if(!l)return;confirmBox('حذف الصنف من الأمر',`${l.itemNo} — ${l.desc} (${l.region}). سيُحذف مع سجل صرفه.`,'حذف',async()=>{await mutateOrder(o.id,od=>({lines:od.lines.filter(y=>y.id!==l.id)}));toast('حُذف الصنف')})},
   'new-item'(){openModal(`<h3>صنف جديد</h3><form novalidate style="display:grid;gap:12px"><div><label class="lb" for="m-ino">رقم الصنف</label><input class="in" id="m-ino" autocomplete="off" inputmode="numeric" maxlength="11" placeholder="22xxxxxxxxx"></div><div><label class="lb" for="m-idesc">الوصف</label><input class="in" id="m-idesc" autocomplete="off"></div>${capField('m-i')}<div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">إضافة</button><button type="button" class="btn" data-m="cancel">إلغاء</button></div></form>`,
@@ -673,7 +696,7 @@ const ACT={
   'edit-item'(t){const it=S.items.get(t.dataset.no);if(!it)return;openModal(`<h3>تعديل الصنف ${esc(it.itemNo)}</h3><form novalidate style="display:grid;gap:12px"><div><label class="lb" for="m-idesc">الوصف</label><input class="in" id="m-idesc" value="${esc(it.desc)}" autocomplete="off"></div>${capField('m-i',+it.cap>0?it.cap:'')}<div class="hint">التعديل يُطبَّق على الأوامر الجارية فوراً. عمليات الصرف السابقة والأوامر المنتهية تبقى كما سُجّلت.</div><div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary">حفظ</button><button type="button" class="btn" data-m="cancel">إلغاء</button></div></form>`,
     {ok:async()=>{const desc=v('m-idesc').trim();if(!desc)return mErr('اكتب الوصف.');{const ow=descOwner(desc,it.itemNo);if(ow)return mErr(`الوصف «${ow.desc}» مسجّل برقم الصنف ${ow.itemNo}.`)}const cap=readCap('m-i-cap');if(!cap)return mErr(CAP_ERR);
       const descCh=normDesc(desc)!==normDesc(it.desc);
-      try{await S.db.collection('items').doc(it.id).update({desc,cap});if(descCh)for(const o of S.orders.filter(o=>o.status!=='closed'&&(o.lines||[]).some(l=>l.itemNo===it.itemNo))){await mutateOrder(o.id,od=>{od.lines.forEach(l=>{if(l.itemNo===it.itemNo)l.desc=desc});return{lines:od.lines}})}closeModal();toast('تم حفظ الصنف')}catch(e){mErr(dbErr(e))}}})},
+      try{await S.db.collection('items').doc(it.id).update({cap});if(descCh)await setItemDesc(it,desc);closeModal();toast('تم حفظ الصنف')}catch(e){mErr(dbErr(e))}}})},
   'del-item'(t){const it=S.items.get(t.dataset.no);if(!it)return;confirmBox('حذف الصنف '+it.itemNo,`«${it.desc}» غير مستخدم في أي أمر، وسيُحذف من الدليل.`,'حذف',async()=>{await S.db.collection('items').doc(it.id).delete();toast('حُذف الصنف')})},
   'xlsx-one'(){const o=getOrder(S.orderId);exportXlsx([o],`أمر توزيع ${safeName(o.no)}.xlsx`)},
   'xlsx-all'(){const list=S.orders.filter(o=>o.status==='closed');exportXlsx(list,`سجل الأوامر المنتهية ${today()}.xlsx`)},
@@ -691,12 +714,14 @@ const normDesc=x=>String(x||'').replace(/\s+/g,' ').trim();
 function descOwner(desc,exceptNo){const k=normDesc(desc);return [...S.items.values()].find(i=>normDesc(i.desc)===k&&i.itemNo!==exceptNo)}
 function noHint(val){const n=nd(val).replace(/\s/g,'');if(!n)return['',''];if(/\D/.test(n))return['أرقام فقط','bad'];if(!n.startsWith('22')&&n.length>=2)return['يجب أن يبدأ بـ 22','bad'];if(n.length<11)return[`${n.length} من 11 رقماً`,''];if(n.length>11)return[`${n.length} رقماً — الزيادة غير مقبولة`,'bad'];return null}
 async function cleanupItem(no){if(!no||S.orders.some(o=>(o.lines||[]).some(l=>l.itemNo===no)))return;const it=S.items.get(no);if(it)try{await S.db.collection('items').doc(it.id).delete()}catch(e){}}
-function readLine(p){const no=nd(v(p+'-no')),desc=v(p+'-desc').trim(),qty=num(v(p+'-qty')),region=v(p+'-region').trim();
+function readLine(p,freeNo){const no=nd(v(p+'-no')),desc=v(p+'-desc').trim(),qty=num(v(p+'-qty')),region=v(p+'-region').trim();
   if(!no)return{err:'اكتب رقم الصنف.'};if(!NO_RE.test(no))return{err:NO_MSG};if(!desc)return{err:'اكتب وصف الصنف.'};if(!(qty>0))return{err:'اكتب كمية أكبر من صفر.'};
-  const it=S.items.get(no);if(it&&normDesc(it.desc)!==normDesc(desc))return{err:`رقم الصنف ${no} مسجّل بوصف «${it.desc}». الرقم لا يتكرر إلا بنفس الوصف.`};
-  if(!it){const ow=descOwner(desc,no);if(ow)return{err:`الوصف «${ow.desc}» مسجّل برقم الصنف ${ow.itemNo}. استخدم نفس الرقم حتى لا يتكرر الصنف.`}}
+  const it=S.items.get(no);const free=!!it&&no===freeNo;if(it&&!free&&normDesc(it.desc)!==normDesc(desc))return{err:`رقم الصنف ${no} مسجّل بوصف «${it.desc}». الرقم لا يتكرر إلا بنفس الوصف.`};
+  if(!it||free){const ow=descOwner(desc,no);if(ow)return{err:`الوصف «${ow.desc}» مسجّل برقم الصنف ${ow.itemNo}. استخدم نفس الرقم حتى لا يتكرر الصنف.`}}
   const cap=it?capOf(no):readCap(p+'-cap');if(!it&&!cap)return{err:`الصنف ${no} جديد. ${CAP_ERR}`};
-  return{no,desc:it?it.desc:desc,qty:r3(qty),region,cap}}
+  return{no,desc:it&&!free?it.desc:desc,qty:r3(qty),region,cap}}
+async function setItemDesc(it,desc){await S.db.collection('items').doc(it.id).update({desc});
+  for(const o of S.orders.filter(o=>o.status!=='closed'&&(o.lines||[]).some(l=>l.itemNo===it.itemNo)))await mutateOrder(o.id,od=>{od.lines.forEach(l=>{if(l.itemNo===it.itemNo)l.desc=desc});return{lines:od.lines}})}
 async function ensureItem(r){if(!S.items.has(r.no))await S.db.collection('items').doc(itemId(r.no)).set({itemNo:r.no,desc:r.desc,cap:r.cap,createdAt:Date.now()})}
 
 function addLineModal(){openModal(`<h3>أمر صرف — إضافة صنف</h3><form novalidate style="display:grid;gap:12px">
@@ -709,7 +734,7 @@ function addLineModal(){openModal(`<h3>أمر صرف — إضافة صنف</h3><
   <div class="ferr" id="m-err"></div><div class="foot"><button class="btn primary" id="f-go">إضافة</button><button type="button" class="btn" data-m="cancel">إغلاق</button></div></form>`,{ok:addLine})}
 async function addLine(){const o=getOrder(S.orderId);if(!o)return closeModal();mErr('');
   const r=readLine('f');if(r.err){mErr(r.err);return}
-  const dRaw=v('f-dist').trim();let d0=0;if(dRaw){d0=num(dRaw);if(!(d0>=0)){mErr('المصروف الآن يجب أن يكون رقماً.');return}if(d0>r.qty){mErr('المصروف لا يمكن أن يزيد عن الكمية.');return}}
+  const dRaw=v('f-dist').trim();let d0=0;if(dRaw){d0=num(dRaw);if(!(d0>=0)){mErr('المصروف الآن يجب أن يكون رقماً.');return}if(d0>r.qty){mErr('المصروف لا يمكن أن يزيد عن الكمية.');return}if(d0>0&&!r.region){mErr('اكتب المنطقة، فهي مطلوبة عند تسجيل مصروف.');return}}
   const line={id:uid(),itemNo:r.no,desc:r.desc,qty:r.qty,region:r.region,dists:d0>0?[mkDist(d0,r.region,'',r.cap)]:[]};
   const btn=$('#f-go');if(btn)btn.disabled=true;
   try{await ensureItem(r);await mutateOrder(o.id,od=>({lines:[...(od.lines||[]),line]}));
@@ -726,8 +751,53 @@ function nlRow(){const p='nl'+(S.nlSeq++);const n=document.querySelectorAll('#nl
   <div><label class="lb" for="${p}-dist">المصروف الآن <span style="font-weight:400">(اختياري)</span></label><input class="in" id="${p}-dist" inputmode="decimal" autocomplete="off"></div>
   <div class="nl-full" id="${p}-capw" hidden>${capField(p)}</div><div class="nl-full cartwrap" id="${p}-cart"></div></div></div>`}
 function renumberNl(){document.querySelectorAll('#nl-rows .nl-n').forEach((e,i)=>e.textContent=i+1)}
+const ICO_ITEM='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></svg>';
+const ICO_DIST='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/><path d="m15 17 2 2 4-4"/></svg>';
+function fixOrders(){return S.orders.filter(o=>o.status!=='closed'&&(o.lines||[]).length).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))}
+function fixLineOpts(o){return sortLines(o.lines||[]).map(l=>`<option value="${esc(l.id)}" ${l.id===S.fixL?'selected':''}>${esc(l.itemNo)} — ${esc(l.desc)}${l.region?' — '+esc(l.region):''} (${(l.dists||[]).length} صرف)</option>`).join('')}
+function fixSection(){const os=fixOrders();
+  if(!os.length)return `<section class="set"><div class="set-h"><b>تصحيح الأوامر</b><small>لا توجد أوامر جارية فيها أصناف. لتصحيح أمر منتهٍ أعد فتحه أولاً.</small></div></section>`;
+  if(!os.some(o=>o.id===S.fixO))S.fixO=(S.orderId&&os.some(o=>o.id===S.orderId))?S.orderId:os[0].id;
+  const o=getOrder(S.fixO);
+  return `<section class="set"><div class="set-h"><b>تصحيح الأوامر</b><small>لتصحيح خطأ في صنف داخل أمر، أو في عملية صرف سُجّلت. الأوامر المنتهية تُعاد فتحها أولاً.</small></div>
+    <div><label class="lb" for="m-fo">الأمر</label><select class="in" id="m-fo">${os.map(x=>`<option value="${esc(x.id)}" ${x.id===S.fixO?'selected':''}>أمر ${esc(x.no)} — ${fod(x)}</option>`).join('')}</select></div>
+    <div><label class="lb" for="m-fl">الصنف</label><select class="in" id="m-fl">${fixLineOpts(o)}</select></div>
+    <div class="actions">${can('edit')?`<button type="button" class="btn fix-item" data-m="fix-line">${ICO_ITEM}تعديل الصنف</button>`:''}<button type="button" class="btn fix-dist" data-m="fix-dist">${ICO_DIST}تعديل عملية صرف</button></div></section>`}
+$('#modal').addEventListener('change',e=>{const t=e.target;if(t.id==='m-fo'){S.fixO=t.value;S.fixL='';const fl=$('#m-fl');if(fl)fl.innerHTML=fixLineOpts(getOrder(t.value))}else if(t.id==='m-fl')S.fixL=t.value});
+function distFix(oid,lid,sel,msg){const o=getOrder(oid);const l=o&&(o.lines||[]).find(x=>x.id===lid);if(!l)return openSettings('الصنف لم يعد موجوداً في الأمر.');
+  const ds=l.dists||[];const d=sel!=null?ds[sel]:null;
+  const head=`<h3><span class="tagx disp">تعديل عملية صرف</span>${esc(l.desc)}</h3><div class="hint" style="margin:0">أمر ${esc(o.no)} · رقم الصنف ${esc(l.itemNo)} · الكمية ${fmt(l.qty)} · المصروف ${fmt(lDisp(l))}</div>${msg?`<div class="banner">${esc(msg)}</div>`:''}`;
+  if(!ds.length){openModal(head+`<div class="hint">لم يُسجَّل صرف لهذا الصنف بعد.</div><div class="foot"><button type="button" class="btn" data-m="back">رجوع للإعدادات</button></div>`,{back:()=>openSettings()});return}
+  const maxQ=d?r3((+l.qty||0)-(lDisp(l)-(+d.qty||0))):0;
+  openModal(head+`<div><div class="lb">اختر عملية الصرف</div><div class="dpick">${ds.map((x,i)=>({x,i})).reverse().map(({x,i})=>`<button type="button" data-m="pick" data-i="${i}" aria-pressed="${i===sel}"><div><b>${fmt(x.qty)}</b> ← ${esc(regLbl(dReg(x,l)))}${x.rep?' · '+esc(x.rep):''}${edMark(x)}<small>${dDay(x.at)} ${fdt(x.at)}</small></div><span class="mut">${i===sel?'محددة':'اختيار'}</span></button>`).join('')}</div></div>
+    ${d?`<form novalidate style="display:grid;gap:12px">
+      <div class="grid2"><div><label class="lb" for="m-eq">الكمية المصروفة</label><input class="in" id="m-eq" inputmode="decimal" value="${d.qty}" autocomplete="off" ${can('edit')?'':'readonly'}><div class="hint">الحد الأعلى ${fmt(maxQ)}</div></div>
+      <div><label class="lb" for="m-er">المنطقة <span class="req" aria-hidden="true">*</span></label><input class="in" id="m-er" list="dl-regions" value="${esc(dReg(d,l))}" autocomplete="off" ${can('edit')?'':'readonly'}></div></div>
+      <div class="grid2"><div><label class="lb" for="m-erep">المندوب</label><input class="in" id="m-erep" list="dl-reps" value="${esc(d.rep||'')}" autocomplete="off" ${can('edit')?'':'readonly'}></div>
+      <div><label class="lb" for="m-en">ملاحظة</label><input class="in" id="m-en" value="${esc(d.note||'')}" autocomplete="off" ${can('edit')?'':'readonly'}></div></div>
+      <div class="cartwrap" id="m-ecart" data-cap="${+d.cap||0}" data-max="${maxQ}"></div>
+      <div class="ferr" id="m-err"></div>
+      <div class="foot">${can('edit')?'<button class="btn primary">حفظ التعديل</button>':''}<button type="button" class="btn" data-m="back">رجوع</button>${can('undo')?'<button type="button" class="btn danger" data-m="deld" style="margin-inline-start:auto">حذف العملية</button>':''}</div></form>`
+    :`<div class="ferr" id="m-err"></div><div class="foot"><button type="button" class="btn" data-m="back">رجوع للإعدادات</button></div>`}`,
+  {pick:b=>distFix(oid,lid,+b.dataset.i),back:()=>openSettings(),
+   ok:async()=>{if(!d||!can('edit'))return;const q=num(v('m-eq')),reg=v('m-er').trim();
+     if(!(q>0))return mErr('اكتب الكمية المصروفة. لإلغاء العملية كاملة استخدم «حذف العملية».');
+     if(q>maxQ+1e-9)return mErr(`الكمية أكبر من المسموح (${fmt(maxQ)})، لأن مجموع المصروف لا يتجاوز كمية الصنف.`);
+     if(!reg)return mErr('اكتب المنطقة التي صُرفت لها الكمية.');
+     try{await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);const y=x&&(x.dists||[])[sel];if(!y||y.at!==d.at)throw new Error('تغيّر سجل الصرف من جهاز آخر. ارجع واختر العملية من جديد.');
+         const others=r3((x.dists||[]).reduce((a,z,k)=>a+(k===sel?0:+z.qty||0),0));if(others+q>(+x.qty||0)+1e-9)throw new Error('مجموع المصروف سيتجاوز كمية الصنف.');
+         Object.assign(y,{qty:r3(q),region:reg,note:v('m-en').trim(),editedAt:Date.now(),editedBy:S.role});const rp=v('m-erep').trim();if(rp)y.rep=rp;else delete y.rep;
+         if(+y.cap>0)y.carts=carts(q,+y.cap).n;return{lines:od.lines}});
+       distFix(oid,lid,sel,'تم حفظ التعديل')}catch(e){mErr(dbErr(e))}},
+   deld:async(b)=>{if(!d)return;if(!b.dataset.arm){b.dataset.arm='1';b.textContent='تأكيد حذف العملية';b.classList.add('solid');return}
+     try{await mutateOrder(o.id,od=>{const x=od.lines.find(y=>y.id===l.id);const y=x&&(x.dists||[])[sel];if(!y||y.at!==d.at)throw new Error('تغيّر سجل الصرف من جهاز آخر. ارجع واختر العملية من جديد.');x.dists.splice(sel,1);return{lines:od.lines}});
+       distFix(oid,lid,null,`حُذفت العملية وأُعيدت ${fmt(d.qty)} إلى الكمية المتوفرة`)}catch(e){mErr(dbErr(e))}}});
+  if(d)updECart()}
+function updECart(){const b=$('#m-ecart');if(!b)return;const q=num(v('m-eq'));const cap=+b.dataset.cap||0;const left=r3((+b.dataset.max||0)-(q||0));
+  const h=cap>0&&q>0?cartBox(q,cap,`بالسعة المسجلة وقت الصرف · المتبقي بعد التعديل ${fmt(Math.max(0,left))}`):'';if(b.innerHTML!==h)b.innerHTML=h}
 function openSettings(msg){const admin=S.role==='admin';const pm=S.perms||{};
   openModal(`<h3>الإعدادات</h3>${msg?`<div class="banner">${esc(msg)}</div>`:''}
+  ${can('edit')||can('undo')?fixSection():''}
   <section class="set"><div class="set-h"><b>الرقم السري</b><small>غيّر الرقم السري لحساب ${ROLES[S.role]}</small></div><button type="button" class="btn" data-m="pass">تغيير الرقم السري</button></section>
   <section class="set"><div class="set-h"><b>صلاحيات المستخدم</b><small>${admin?'ضع علامة ✓ أمام ما يُسمح للمستخدم بفعله. المدير لديه كل الصلاحيات دائماً.':'يحدّدها المدير فقط.'}</small></div>
     <div class="perms">${PERMS.map(([k,l])=>`<label class="perm"><input type="checkbox" id="pm-${k}" ${pm[k]===false?'':'checked'} ${admin?'':'disabled'}><span>${l}</span></label>`).join('')}</div>
@@ -748,6 +818,8 @@ function openSettings(msg){const admin=S.role==='admin';const pm=S.perms||{};
     <div class="actions"><button type="button" class="btn danger solid" data-m="wipe">حذف نهائي</button></div></section>`:''}
   <div class="ferr" id="m-err"></div><div class="foot"><button type="button" class="btn" data-m="cancel">إغلاق</button></div>`,
   {pass:()=>ACT.chpass(),
+   'fix-line':()=>{const o=getOrder(v('m-fo')),l=o&&(o.lines||[]).find(x=>x.id===v('m-fl'));if(!l)return mErr('اختر الأمر والصنف أولاً.');S.fixO=o.id;S.fixL=l.id;ACT['edit-line']({dataset:{o:o.id,l:l.id,from:'set'}})},
+   'fix-dist':()=>{const o=getOrder(v('m-fo')),l=o&&(o.lines||[]).find(x=>x.id===v('m-fl'));if(!l)return mErr('اختر الأمر والصنف أولاً.');S.fixO=o.id;S.fixL=l.id;distFix(o.id,l.id,null)},
    delorder:async(b)=>{const id=v('m-delo');const o=getOrder(id);if(!o)return mErr('اختر الأمر الذي تريد حذفه.');if(nd(v('m-delc'))!==nd(o.no))return mErr(`اكتب رقم الأمر ${o.no} في خانة التأكيد.`);
      b.disabled=true;try{await enqueue('o:'+o.id,()=>S.db.collection('orders').doc(o.id).delete());if(S.orderId===o.id)S.orderId=null;S.noKeep=true;render();openSettings(`حُذف الأمر ${o.no}`)}catch(e){b.disabled=false;mErr(dbErr(e))}},
    'wipe-demo':async(b)=>{b.disabled=true;try{const demo=S.orders.filter(o=>o.id.startsWith('demo'));const nos=new Set(demo.flatMap(o=>(o.lines||[]).map(l=>l.itemNo)));
