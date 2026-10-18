@@ -572,7 +572,7 @@ function orderView(o){
       ${o.note?`<div>${esc(o.note)}</div>`:''}</div>
     <div class="actions">
       ${!closed&&can('add')?`<button class="btn primary" data-act="add-line">+ أمر صرف</button>`:''}
-      ${can('export')?`<button class="btn" data-act="xlsx-one">Excel</button><button class="btn" data-act="print">طباعة</button>`:''}
+      ${can('export')?`<button class="btn" data-act="load-sheets">أوراق التحميل</button><button class="btn" data-act="xlsx-one">Excel</button><button class="btn" data-act="print">طباعة</button>`:''}
       ${can('close')?(closed?`<button class="btn" data-act="reopen">إعادة فتح</button>`:`<button class="btn" data-act="close-order">إنهاء الأمر</button>`):''}
       ${!closed&&can('edit')?`<button class="btn" data-act="edit-order">تعديل البيانات</button>`:''}</div></div>
   ${!closed&&can('close')&&s.lines&&s.rem<=0?`<div class="banner"><span>تم صرف كل الكميات في هذا الأمر.</span><button class="btn sm primary" data-act="close-order">إنهاء الأمر ونقله للسجل</button></div>`:''}`;
@@ -790,6 +790,7 @@ const ACT={
   'del-item'(t){const it=S.items.get(t.dataset.no);if(!it)return;confirmBox('حذف الصنف '+it.itemNo,`«${it.desc}» غير مستخدم في أي أمر، وسيُحذف من الدليل.`,'حذف',async()=>{await S.db.collection('items').doc(it.id).delete();toast('حُذف الصنف')})},
   'xlsx-one'(){const o=getOrder(S.orderId);exportXlsx([o],`أمر توزيع ${safeName(o.no)}.xlsx`)},
   'xlsx-all'(){const list=S.orders.filter(o=>o.status==='closed');exportXlsx(list,`سجل الأوامر المنتهية ${today()}.xlsx`)},
+  'load-sheets'(){loadSheetsModal()},
   print(){const o=getOrder(S.orderId);const w=window.open('','_blank');if(!w){saveFile(`أمر توزيع ${safeName(o.no)} - للطباعة.html`,new Blob([printHtml(o)],{type:'text/html'}),'تم تنزيل ملف الطباعة. افتحه وسيظهر مربع الطباعة.');return}w.document.open();w.document.write(printHtml(o));w.document.close()},
 };
 const safeName=s=>String(s).replace(/[\\/:*?"<>|]/g,'-').slice(0,60);
@@ -960,6 +961,42 @@ function exportXlsx(list,name){
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'الأصناف');XLSX.utils.book_append_sheet(wb,ws3,'ملخص المناطق');XLSX.utils.book_append_sheet(wb,ws2,'سجل الصرف');
   wb.Workbook={Views:[{RTL:true}]};
   const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});saveFile(name,new Blob([buf]),'تم تنزيل ملف Excel')}
+/* ---------- loading sheets: one printed page per region with what is left to load ---------- */
+function regionGroups(o){const m=new Map();(o.lines||[]).forEach(l=>{const k=regLbl(l.region);if(!m.has(k))m.set(k,[]);m.get(k).push(l)});return m}
+function openPrint(name,html){const w=window.open('','_blank');if(!w){saveFile(name,new Blob([html],{type:'text/html'}),'تم تنزيل ملف الطباعة. افتحه وسيظهر مربع الطباعة.');return}w.document.open();w.document.write(html);w.document.close()}
+function loadSheetsModal(){const o=getOrder(S.orderId);if(!o)return;const m=regionGroups(o);
+  const rows=[...m].map(([k,ls],i)=>{const rem=r3(ls.reduce((a,l)=>a+lRem(l),0));const cn=ls.reduce((a,l)=>{const c=lCarts(l,o);return a+(c?c.n:0)},0);
+    return `<label class="perm"><input type="checkbox" class="ls-r" value="${i}" ${rem>0?'checked':''}><span><b>${esc(k)}</b> · ${itemsN(ls.length)} · المطلوب ${fmt(rem)}${rem>0?` · ${cn} عربة`:' · <span class="mut">مكتملة</span>'}</span></label>`}).join('');
+  openModal(`<h3>أوراق التحميل — أمر ${esc(o.no)}</h3><p style="margin:0;color:var(--muted);font-size:13.5px">تُطبع كل منطقة في صفحة مستقلة بالكمية المتبقية للتحميل وعدد العربات، مع خانات المندوب والتوقيع. المناطق المكتملة غير محددة.</p>
+    <div class="actions"><button type="button" class="btn sm" data-m="ls-all">تحديد الكل</button><button type="button" class="btn sm" data-m="ls-none">إلغاء التحديد</button></div>
+    <div class="perms" style="grid-template-columns:1fr">${rows}</div>
+    <div class="ferr" id="m-err"></div><div class="foot"><button type="button" class="btn primary" data-m="ls-go">طباعة</button><button type="button" class="btn" data-m="cancel">إغلاق</button></div>`,
+  {'ls-all':()=>document.querySelectorAll('.ls-r').forEach(c=>c.checked=true),'ls-none':()=>document.querySelectorAll('.ls-r').forEach(c=>c.checked=false),
+   'ls-go':()=>{const keys=[...m.keys()];const sel=[...document.querySelectorAll('.ls-r:checked')].map(c=>keys[+c.value]);if(!sel.length)return mErr('اختر منطقة واحدة على الأقل.');
+     openPrint(`أوراق تحميل أمر ${safeName(o.no)}.html`,loadSheetHtml(o,sel.map(k=>[k,m.get(k)])));closeModal()}})}
+function loadSheetHtml(o,groups){const now=fdt(Date.now());
+  const page=([k,ls])=>{let tq=0,td=0,tr=0,tc=0;
+    const rows=ls.map((l,i)=>{const d=lDisp(l),r=lRem(l),cap=lCap(l,o),c=carts(r,cap);tq+=+l.qty||0;td+=d;tr+=r;tc+=c?c.n:0;
+      return `<tr><td>${i+1}</td><td>${esc(l.itemNo)}</td><td class="w">${esc(l.desc)}</td><td>${fmt(l.qty)}</td><td>${fmt(d)}</td><td class="b">${fmt(r)}</td><td>${cap?fmt(cap):'—'}</td><td class="b">${r<=0?'0':c?c.n:'—'}${c?`<small>${cartTxt(c)}</small>`:''}</td><td class="chk"></td></tr>`}).join('');
+    return `<section class="pg"><div class="hd"><div><div class="ttl">ورقة تحميل</div><div>أمر توزيع رقم <b>${esc(o.no)}</b> · تاريخ الأمر ${fod(o)}</div></div><div class="rg">${esc(k)}</div></div>
+    <div class="meta"><span>عدد الأصناف: <b>${ls.length}</b></span><span>المطلوب تحميله: <b>${fmt(r3(tr))}</b></span><span>عدد العربات: <b>${tc}</b></span><span>تاريخ الطباعة: ${now}</span></div>
+    <table><thead><tr><th style="width:28px">م</th><th style="width:96px">رقم الصنف</th><th>الوصف</th><th style="width:70px">المعتمد</th><th style="width:70px">المصروف سابقاً</th><th style="width:78px">المطلوب تحميله</th><th style="width:60px">سعة العربة</th><th style="width:96px">العربات</th><th style="width:44px">تم ✓</th></tr></thead>
+    <tbody>${rows}</tbody><tfoot><tr><td colspan="3">الإجمالي</td><td>${fmt(r3(tq))}</td><td>${fmt(r3(td))}</td><td class="b">${fmt(r3(tr))}</td><td></td><td class="b">${tc}</td><td></td></tr></tfoot></table>
+    <div class="fields"><div>اسم المندوب: <i></i></div><div>رقم الجوال: <i></i></div><div>رقم لوحة المركبة: <i></i></div><div>تاريخ ووقت الاستلام: <i></i></div></div>
+    <div class="sig"><div>أمين المستودع</div><div>المندوب المستلم</div><div>المسؤول عن التوزيع</div></div></section>`};
+  return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>أوراق تحميل أمر ${esc(o.no)}</title><style>
+@page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:Tahoma,"Segoe UI",Arial,sans-serif;color:#111;font-size:12.5px;margin:0;padding:12px}
+.pg{page-break-after:always;break-after:page;padding-bottom:10px}.pg:last-child{page-break-after:auto;break-after:auto}
+.hd{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:8px;gap:12px}
+.ttl{font-size:20px;font-weight:700}.rg{font-size:28px;font-weight:700;border:2px solid #111;border-radius:8px;padding:4px 18px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 22px;margin:10px 0;font-size:13px}
+table{width:100%;border-collapse:collapse}th,td{border:1px solid #555;padding:6px;text-align:center;vertical-align:middle}td.w{text-align:right}
+th{background:#eef2ef;font-size:11.5px}td.b{font-weight:700;font-size:14px}td small{display:block;font-weight:400;font-size:10.5px;color:#444}
+tfoot td{font-weight:700;background:#fafafa}tr{page-break-inside:avoid}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px 30px;margin-top:22px;font-size:13px}.fields i{display:inline-block;border-bottom:1px dotted #333;width:60%;height:14px;vertical-align:bottom}
+.sig{display:flex;justify-content:space-between;gap:20px;margin-top:46px}.sig div{flex:1;text-align:center;border-top:1px solid #333;padding-top:6px}
+@media print{body{padding:0 3px}}</style></head><body>${groups.map(page).join('')}
+<script>addEventListener('load',function(){setTimeout(function(){window.print()},400)})<\/script></body></html>`}
 function printHtml(o){const s=oStats(o);const ls=sortLines(o.lines||[]);const ag=regAgg(ls);
   const log=ls.flatMap(l=>(l.dists||[]).map(d=>({l,d}))).sort((x,y)=>(x.d.at||0)-(y.d.at||0));
   return `<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>أمر توزيع ${esc(o.no)}</title><style>
@@ -986,7 +1023,7 @@ ${log.map(({l,d})=>`<tr><td>${fdt(d.at)}</td><td>${esc(l.itemNo)}</td><td>${esc(
 
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{const t=e.target.closest('#app [data-act]');if(!t)return;const f=ACT[t.dataset.act];if(f){e.preventDefault();const need=GUARD[t.dataset.act];if(need&&!can(need)){toast('ليست لديك صلاحية لهذا الإجراء.','err');return}f(t)}});
-const GUARD={'new-order':'create','add-line':'add','edit-order':'edit','edit-line':'edit','del-order':'del','del-line':'del','close-order':'close',reopen:'close','xlsx-one':'export','xlsx-all':'export',print:'export','new-item':'items','edit-item':'items','del-item':'items'};
+const GUARD={'new-order':'create','add-line':'add','edit-order':'edit','edit-line':'edit','del-order':'del','del-line':'del','close-order':'close',reopen:'close','xlsx-one':'export','xlsx-all':'export',print:'export','load-sheets':'export','new-item':'items','edit-item':'items','del-item':'items'};
 document.addEventListener('toggle',e=>{const d=e.target;if(!d.dataset||!d.dataset.k)return;if(d.open)S.open.add(d.dataset.k);else S.open.delete(d.dataset.k)},true);
 document.addEventListener('input',e=>{const t=e.target;
   if(t.id==='q'){S.q=t.value;render()}
