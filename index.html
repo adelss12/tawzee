@@ -272,6 +272,55 @@ table.lines tbody tr:has(+tr.sub) td{border-bottom:0}
 .hist{display:grid;gap:6px;max-height:220px;overflow:auto}
 .hist .h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;border:1px solid var(--line);border-radius:8px;padding:7px 10px}
 .hist .h small{color:var(--muted);display:block}
+/* order sheet by item: one row per item, one cell per region, item total at the end */
+.ibs{display:grid;gap:10px}
+.ib{display:grid;grid-template-columns:170px minmax(0,1fr) 120px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.ib-i{padding:12px;display:grid;align-content:start;gap:2px;border-inline-end:1px solid var(--line);min-width:0}
+.ib-i b{font-size:14.5px;overflow-wrap:anywhere}.ib-i small{color:var(--muted);font-size:12px}
+.ib-cnt{justify-self:start;margin-top:6px;font-size:11.5px;font-weight:600;background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.ib-r{display:flex;overflow-x:auto;min-width:0}
+.rc{flex:1 0 150px;border-inline-end:1px solid var(--line);display:grid;grid-template-rows:auto 1fr;min-width:0}
+.ib-r .rc:last-child{border-inline-end:0}
+.rc-h{display:block;background:var(--accent-soft);color:var(--accent);font-family:var(--f-display);font-weight:600;font-size:14px;padding:7px 10px;text-align:center;overflow-wrap:anywhere}
+.rc-b{padding:10px 12px;display:grid;align-content:start;gap:2px}
+.rc-q{font-family:var(--f-display);font-size:20px;font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.rc-d{font-size:12.5px;color:var(--muted)}.rc-d b{color:var(--ink);font-weight:600}.rc-d b.rem{color:var(--warn)}.rc-d b.rem.z{color:var(--ok)}
+.rc-c{font-size:12.5px;margin-top:4px}.rc-c b{color:var(--accent);font-family:var(--f-display);font-size:15px;font-weight:600}.rc-c small{display:block;color:var(--muted);font-size:11.5px}
+.rc-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.ib-t{background:var(--sunk);display:grid;align-content:start;gap:1px;border-inline-start:1px solid var(--line)}
+.ib-t b{font-family:var(--f-display);font-size:16px;font-weight:600;padding:8px 10px 0}.ib-t small{color:var(--muted);font-size:12px;padding-inline:10px}
+.ib-t .rc-h{background:var(--line);color:var(--ink)}
+.ib-l{grid-column:1/-1;border-top:1px solid var(--line)}
+.ib-l>summary{cursor:pointer;padding:8px 12px;font-size:13px;font-weight:600;color:var(--muted);list-style:none}
+.ib-l>summary::-webkit-details-marker{display:none}
+.ib-l>summary::after{content:" ▾"}.ib-l[open]>summary::after{content:" ▴"}
+.ib-l>summary:hover{color:var(--ink);background:var(--sunk)}
+.ib-l .ldg{display:grid;gap:10px;padding:0 12px 12px}
+.rsec{display:grid;gap:8px}.rsec h3{font-size:15px}
+.rcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;align-items:start}
+.rcard{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.rcard summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 14px;align-items:baseline}
+.rcard summary::-webkit-details-marker{display:none}
+.rcard summary:hover{background:var(--sunk)}
+.rcard summary:focus-visible,.ib-l>summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.rcard .rn{font-family:var(--f-display);font-weight:600;font-size:16px;color:var(--accent)}
+.rcard .rq{font-family:var(--f-display);font-weight:600;font-size:20px;grid-row:1/3;grid-column:2;align-self:center}
+.rcard .rm{font-size:12.5px;color:var(--muted)}
+.rcard .chev{grid-column:1/-1;font-size:11px;color:var(--muted)}
+.rcard[open] .chev{transform:rotate(180deg);justify-self:start}
+.rcard[open] summary{border-bottom:1px solid var(--line);background:var(--accent-soft)}
+.rt{width:100%;border-collapse:collapse;font-size:13px}
+.rt th{font-size:11.5px;color:var(--muted);font-weight:600;text-align:start;padding:6px 12px;background:var(--sunk)}
+.rt td{padding:7px 12px;border-top:1px solid var(--line)}
+.rt .n{text-align:end;white-space:nowrap}.rt .rem{color:var(--warn);font-weight:600}.rt .rem.z{color:var(--ok)}
+@media (max-width:640px){
+  .ib{grid-template-columns:minmax(0,1fr)}
+  .ib-i{border-inline-end:0;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+  .ib-cnt{margin-top:0}
+  .rc{flex-basis:140px}
+  .ib-t{border-inline-start:0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding-bottom:8px}
+  .ib-t .rc-h{flex-basis:100%;text-align:start}
+}
 /* carts */
 .cartbox{background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:grid;gap:6px}
 .cartbox:empty{display:none}
@@ -337,7 +386,7 @@ const ROLES={admin:'المدير',user:'المستخدم'};
 const DEF='000000';
 const PERMS=[['create','إنشاء أمر جديد'],['add','أمر صرف (إضافة صنف للأمر)'],['dist','صرف الكميات'],['undo','التراجع عن الصرف'],['edit','تعديل الأوامر والأصناف'],['del','حذف'],['close','إنهاء الأمر وإعادة فتحه'],['export','تصدير Excel وطباعة'],['items','إدارة دليل الأصناف'],['backup','تنزيل نسخة احتياطية']];
 const can=k=>S.role==='admin'||!(S.perms&&S.perms[k]===false);
-const S={perms:null,db:null,dbState:'loading',role:null,loginRole:'admin',auth:null,authLoaded:false,items:new Map(),orders:[],ordersLoaded:false,tab:'open',orderId:null,q:'',region:'',mh:{},noKeep:false};
+const S={open:new Set(),perms:null,db:null,dbState:'loading',role:null,loginRole:'admin',auth:null,authLoaded:false,items:new Map(),orders:[],ordersLoaded:false,tab:'open',orderId:null,q:'',region:'',mh:{},noKeep:false};
 
 function nd(s){return String(s??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).trim()}
 function num(s){const v=Number(nd(s).replace(/,/g,'').replace('٫','.'));return String(s??'').trim()===''?NaN:(isFinite(v)?v:NaN)}
@@ -515,7 +564,7 @@ function orderView(o){
   const s=oStats(o),closed=o.status==='closed';
   const regions=[...new Set((o.lines||[]).map(l=>l.region))].sort((a,b)=>a.localeCompare(b,'ar'));
   if(S.region&&!regions.includes(S.region))S.region='';
-  const ls=sortLines(o.lines||[]).filter(l=>!S.region||l.region===S.region);
+  const ls=(o.lines||[]).filter(l=>!S.region||l.region===S.region);
     const head=`<div><button class="btn ghost sm" data-act="back">→ ${closed?'الأوامر المنتهية':'الأوامر الجارية'}</button></div>
   <div class="sheet-head"><div class="t">
       <h2>أمر توزيع ${esc(o.no)} <span class="pill ${closed?'closed':'open'}">${closed?'منتهي':'جارٍ'}</span></h2>
@@ -530,15 +579,9 @@ function orderView(o){
   const add='';
   const filt=regions.length>1?`<div class="toolbar"><label class="lb" for="rf" style="margin:0">المنطقة</label><div style="flex:0 1 240px"><select class="in" id="rf" data-act-change="region"><option value="">كل المناطق (${regions.length})</option>${regions.map(r=>`<option value="${esc(r)}" ${S.region===r?'selected':''}>${esc(r)}</option>`).join('')}</select></div></div>`:'';
   const table=!(o.lines||[]).length?`<div class="empty"><h3>لا توجد أصناف في هذا الأمر</h3><p>${closed?'أُنهي هذا الأمر بدون أصناف.':(can('add')?'اضغط «+ أمر صرف» لإضافة أول صنف: رقم الصنف والوصف والكمية.':'لا توجد أصناف بعد.')}</p></div>`:
-  `<div class="tbl-wrap"><table class="lines"><thead><tr><th>م</th><th>رقم الصنف</th><th>الوصف</th><th>المنطقة</th><th class="n">الكمية</th><th class="n">المصروف</th><th class="n">المتبقي</th><th>عربات المتبقي</th><th>الحالة</th><th></th></tr></thead><tbody>
-  ${ls.map((l,i)=>{const d=lDisp(l),r=lRem(l);const st=r<=0?'<span class="pill done">مكتمل</span>':d>0?'<span class="pill part">جزئي</span>':'<span class="pill none">لم يُصرف</span>';
-   return `<tr><td class="idx" data-label="م">${i+1}</td><td class="k" data-label="رقم الصنف">${esc(l.itemNo)}</td><td class="wide" data-label="الوصف">${esc(l.desc)}</td><td data-label="المنطقة">${l.region?`<span class="region-tag">${esc(l.region)}</span>`:'—'}</td>
-    <td class="n" data-label="الكمية">${fmt(l.qty)}</td><td class="n" data-label="المصروف">${fmt(d)}</td><td class="n" data-label="المتبقي"><span class="remv ${r<=0?'z':''}">${fmt(r)}</span></td><td class="cc" data-label="عربات المتبقي">${cartCell(l,o)}</td><td data-label="الحالة">${st}</td>
-    <td class="act">${closed?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف (${(l.dists||[]).length})</button>`:
-      `${can('dist')&&r>0?`<button class="btn sm primary" data-act="dist" data-l="${esc(l.id)}">صرف</button>`:((l.dists||[]).length?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف</button>`:'')}`}</td></tr>${subRow(l)}`}).join('')}
-  </tbody></table></div>`;
+  `<div class="ibs">${itemGroups(ls).map(g=>itemBlock(g,o,closed)).join('')}</div>`;
   const stats=`<div class="stats"><div class="stat"><b>${fmt(s.total)}</b><span>إجمالي الكمية</span></div><div class="stat"><b>${fmt(s.disp)}</b><span>المصروف</span></div><div class="stat rem"><b>${fmt(s.rem)}</b><span>المتبقي</span></div><div class="stat"><b>${s.regions}</b><span>عدد المناطق</span></div><div class="stat cart"><b>${fmt(oCarts(o))}</b><span>عربات المتبقي</span></div></div>`;
-  return head+regPanel(o)+add+filt+table+((o.lines||[]).length?stats:'');
+  return head+add+filt+table+((o.lines||[]).length?regionCards(o)+stats:'');
 }
 
 const dDay=t=>t?WD[new Date(t).getDay()]:'—';
@@ -548,6 +591,23 @@ function subRow(l){const ds=l.dists||[];if(!ds.length)return '';const agg=regAgg
   <div class="gt" role="table" aria-label="تفاصيل الصرف"><div class="gr gh" role="row"><span class="c-w" role="columnheader">اليوم</span><span class="c-d" role="columnheader">التاريخ</span><span class="c-k" role="columnheader">الكمية</span><span class="c-q" role="columnheader">الصرف</span><span class="c-p" role="columnheader">المندوب</span><span class="c-r" role="columnheader">المنطقة</span><span class="c-m" role="columnheader">المتبقي</span></div>
   ${(()=>{let left=+l.qty||0;return ds.map(d=>{const before=left;left=r3(left-(+d.qty||0));return `<div class="gr" role="row"><span class="c-w" role="cell">${dDay(d.at)}</span><span class="c-d" role="cell">${fdt(d.at)}</span><span class="c-k" role="cell"><em>الكمية </em>${fmt(before)}</span><span class="c-q" role="cell">${fmt(d.qty)}${edMark(d)}${d.cap?`<span class="dcart">${cartN(d.carts||carts(d.qty,d.cap).n)}</span>`:''}</span><span class="c-p" role="cell">${d.rep?`<em>المندوب: </em>${esc(d.rep)}`:'<span class="mut">—</span>'}</span><span class="c-r" role="cell">${esc(regLbl(dReg(d,l)))}</span><span class="c-m ${left<=0?'z':''}" role="cell"><em>المتبقي </em>${fmt(left)}</span>${d.note?`<span class="c-n" role="cell">ملاحظة: ${esc(d.note)}</span>`:''}</div>`}).join('')})()}
   </div></div></td></tr>`}
+function itemGroups(ls){const m=new Map();ls.forEach(l=>{if(!m.has(l.itemNo))m.set(l.itemNo,[]);m.get(l.itemNo).push(l)});return [...m.values()]}
+function regionCell(l,o,closed){const d=lDisp(l),r=lRem(l),ds=(l.dists||[]).length;const c=lCarts(l,o);
+  const st=r<=0?'<span class="pill done">مكتمل</span>':d>0?'<span class="pill part">جزئي</span>':'';
+  const cc=r<=0?'<div class="rc-c mut">لا عربات متبقية</div>':c?`<div class="rc-c"><b>${c.n}</b> عربة<small>${cartTxt(c)}</small></div>`:'<div class="rc-c"><span class="miss">سعة العربة غير محددة</span></div>';
+  const btn=closed?(ds?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف (${ds})</button>`:''):(can('dist')&&r>0?`<button class="btn sm primary" data-act="dist" data-l="${esc(l.id)}">صرف</button>`:(ds?`<button class="btn sm" data-act="dist" data-l="${esc(l.id)}">سجل الصرف</button>`:''));
+  return `<div class="rc"><div class="rc-h">${esc(regLbl(l.region))}</div><div class="rc-b"><div class="rc-q">${fmt(l.qty)}${st}</div><div class="rc-d">المصروف <b>${fmt(d)}</b></div><div class="rc-d">المتبقي <b class="rem ${r<=0?'z':''}">${fmt(r)}</b></div>${cc}${btn?`<div class="rc-a">${btn}</div>`:''}</div></div>`}
+function itemBlock(g,o,closed){const l0=g[0];const cap=lCap(l0,o);const tq=r3(g.reduce((a,l)=>a+(+l.qty||0),0)),tr=r3(g.reduce((a,l)=>a+lRem(l),0));const tc=g.reduce((a,l)=>{const c=lCarts(l,o);return a+(c?c.n:0)},0);
+  const nd_=g.reduce((a,l)=>a+(l.dists||[]).length,0);
+  const lk='l:'+o.id+':'+l0.itemNo;const led=nd_?`<details class="ib-l" data-k="${esc(lk)}" ${S.open.has(lk)?'open':''}><summary>تفاصيل الصرف (${nd_})</summary><div class="ldg">${g.filter(l=>(l.dists||[]).length).map(l=>subRow(l).replace(/^<tr class="sub"><td colspan="10">/,'').replace(/<\/td><\/tr>$/,'')).join('')}</div></details>`:'';
+  return `<div class="ib"><div class="ib-i"><b>${esc(l0.desc)}</b><small>${esc(l0.itemNo)}</small>${cap?`<small>سعة العربة ${fmt(cap)}</small>`:'<small class="miss">سعة العربة غير محددة</small>'}<span class="ib-cnt">${regN(g.length)}</span></div>
+    <div class="ib-r">${g.map(l=>regionCell(l,o,closed)).join('')}</div>
+    <div class="ib-t"><span class="rc-h">إجمالي الصنف</span><b>${fmt(tq)}</b><small>المتبقي ${fmt(tr)}</small><small>${tc} عربة</small></div>${led}</div>`}
+const itemsN=n=>n===1?'صنف واحد':n===2?'صنفان':n>=3&&n<=10?`${n} أصناف`:`${n} صنف`;
+function regionCards(o){const m=new Map();(o.lines||[]).forEach(l=>{const k=regLbl(l.region);if(!m.has(k))m.set(k,[]);m.get(k).push(l)});if(!m.size)return '';
+  return `<section class="rsec"><h3>إجمالي المناطق</h3><div class="rcards">${[...m].map(([k,ls])=>{const q=r3(ls.reduce((a,l)=>a+(+l.qty||0),0)),rm=r3(ls.reduce((a,l)=>a+lRem(l),0));const cn=ls.reduce((a,l)=>{const c=lCarts(l,o);return a+(c?c.n:0)},0);
+    const rk='r:'+o.id+':'+k;return `<details class="rcard" data-k="${esc(rk)}" ${S.open.has(rk)?'open':''}><summary><span class="rn">${esc(k)}</span><span class="rq">${fmt(q)}</span><span class="rm">المتبقي ${fmt(rm)} · ${cn} عربة · ${itemsN(ls.length)}</span><span class="chev" aria-hidden="true">▾</span></summary>
+    <table class="rt"><thead><tr><th>الصنف</th><th class="n">الكمية</th><th class="n">المتبقي</th><th class="n">العربات</th></tr></thead><tbody>${ls.map(l=>{const c=lCarts(l,o),r=lRem(l);return `<tr><td>${esc(l.desc)}</td><td class="n">${fmt(l.qty)}</td><td class="n rem ${r<=0?'z':''}">${fmt(r)}</td><td class="n">${c?c.n:(r>0?'—':0)}</td></tr>`}).join('')}</tbody></table></details>`}).join('')}</div></section>`}
 function regPanel(o){const agg=regAgg(o.lines||[]);const ks=Object.keys(agg).sort((a,b)=>agg[b].q-agg[a].q);if(!ks.length)return '';
   return `<section class="panel"><h3>الصرف حسب المنطقة</h3><div class="regs">${ks.map(k=>{const a=agg[k];return `<div class="rg-card"><div class="rg-n">${esc(k)}</div><b>${fmt(a.q)}</b><small>${a.n} عملية صرف · ${a.items.size} صنف<br>آخر صرف ${fdt(a.last)}</small></div>`}).join('')}</div></section>`}
 function itemsView(){
@@ -927,6 +987,7 @@ ${log.map(({l,d})=>`<tr><td>${fdt(d.at)}</td><td>${esc(l.itemNo)}</td><td>${esc(
 /* ---------- events ---------- */
 document.addEventListener('click',e=>{const t=e.target.closest('#app [data-act]');if(!t)return;const f=ACT[t.dataset.act];if(f){e.preventDefault();const need=GUARD[t.dataset.act];if(need&&!can(need)){toast('ليست لديك صلاحية لهذا الإجراء.','err');return}f(t)}});
 const GUARD={'new-order':'create','add-line':'add','edit-order':'edit','edit-line':'edit','del-order':'del','del-line':'del','close-order':'close',reopen:'close','xlsx-one':'export','xlsx-all':'export',print:'export','new-item':'items','edit-item':'items','del-item':'items'};
+document.addEventListener('toggle',e=>{const d=e.target;if(!d.dataset||!d.dataset.k)return;if(d.open)S.open.add(d.dataset.k);else S.open.delete(d.dataset.k)},true);
 document.addEventListener('input',e=>{const t=e.target;
   if(t.id==='q'){S.q=t.value;render()}
   else if(t.id==='f-no'){syncDescLock()}
